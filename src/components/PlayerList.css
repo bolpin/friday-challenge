@@ -1,0 +1,9 @@
+.player-list {
+  list-style: none;
+  padding: 0;
+}
+
+.player-list__fallback {
+  color: white;
+  text-align: center;
+}

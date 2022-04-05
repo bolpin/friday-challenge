@@ -38,6 +38,17 @@
   border-radius: 12px;
 }
 
+.player__age {
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background-color: #1a8279;
+  border: 1px solid white;
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
 button {
   margin-left: 0.5rem;
 }
