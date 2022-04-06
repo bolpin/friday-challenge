@@ -1,30 +1,49 @@
 import React, { useState } from "react";
-import axios from 'axios';
 import './Report.css'
 
 const TotalPayoutReport = () => {
-
-  const BASE_URL = 'http://localhost:3000'
 
   const [minPlayerAge, setMinPlayerAge] = useState(14);
   const [maxPlayerAge, setMaxPlayerAge] = useState(150);
   const [totalPayout, setTotalPayout] = useState(null);
   const [payoutMinAge, setPayoutMinAge] = useState(14);
   const [payoutMaxAge, setPayoutMaxAge] = useState(150);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null)
+
+  async function FetchTotalPayout() {
+    setIsLoading(true);
+
+    const BASE_URL = 'http://localhost:3000'
+    
+    try {
+      const response = await fetch(`${BASE_URL}/total_payout.json?` +
+        new URLSearchParams({ 
+          min_age: minPlayerAge,
+          max_age: maxPlayerAge
+        }));
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const result = data[0];
+
+      setTotalPayout( +result.amount);
+      setPayoutMinAge( +result.min_age);
+      setPayoutMaxAge( +result.max_age);
+    } catch(ex) {
+      console.log(ex)
+      setError(ex.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const submitHandler = (event) => {
     event.preventDefault();
-
-    axios.get(`${BASE_URL}/total_payout.json`, { params: {
-      min_age: minPlayerAge,
-      max_age: maxPlayerAge
-    }
-      }).then((response) => {
-        console.log(response.data);
-        setTotalPayout( +response.data[0].amount);
-        setPayoutMinAge( +response.data[0].min_age);
-        setPayoutMaxAge( +response.data[0].max_age);
-      });
+    FetchTotalPayout();
   };
 
   const minAgeChangedHandler = (event) => {
@@ -33,6 +52,27 @@ const TotalPayoutReport = () => {
 
   const maxAgeChangedHandler = (event) => {
     setMaxPlayerAge(event.target.value);
+  }
+
+  let content = <p>No payout.</p>
+  if (totalPayout > 0) {
+    content = 
+      <>
+        Total payout for players aged {payoutMinAge}-{payoutMaxAge}:
+        <h1>
+          {(totalPayout / 100).toLocaleString("en-us", {
+            style: "currency",
+            currency: "USD"
+          })} 
+        </h1>
+      </>
+  }
+
+  if (error) {
+    content = <p>{error}</p>
+  }
+  if (isLoading) {
+    content = <p>Loading...</p>
   }
 
   return (
@@ -56,17 +96,7 @@ const TotalPayoutReport = () => {
           </div>
         </div>
       </form>
-      {totalPayout !== null && 
-        <>
-          Total payout for players aged {payoutMinAge}-{payoutMaxAge}:
-          <h1>
-            {(totalPayout / 100).toLocaleString("en-us", {
-              style: "currency",
-              currency: "USD"
-            })} 
-          </h1>
-        </>
-      }
+      { content }
     </div>
   );
 };

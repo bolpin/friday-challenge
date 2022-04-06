@@ -1,19 +1,18 @@
 import React, { useState } from "react";
-import axios from 'axios';
 import './Report.css'
 
 const DeviceCountReport = () => {
 
-  const BASE_URL = 'http://localhost:3000'
 
   const [minOSVersion, setMinOSVersion] = useState('0.0.0');
   const [maxOSVersion, setMaxOSVersion] = useState('1.0.0');
   const [os, setOs] = useState('android');
-  const [deviceCount, setDeviceCount] = useState(null);
+  const [deviceCount, setDeviceCount] = useState(0);
   const [queryMinVers, setQueryMinVers] = useState(null);
   const [queryMaxVers, setQueryMaxVers] = useState(null);
   const [queryOs, setQueryOs] = useState(null);
   const [httpErrorMsg, setHttpErrorMsg] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const minOSVersionChangedHandler = (event) => {
     setMinOSVersion(event.target.value);
@@ -27,30 +26,33 @@ const DeviceCountReport = () => {
     setOs(event.target.value);
   }
 
-  const submitHandler = (event) => {
-    event.preventDefault();
-
-    // curl -X GET http://localhost:3000/device_count.json -d 'min_vers=1.0.0&os=android&max_vers=2'
-    axios.get(`${BASE_URL}/device_count.json`, { params: {
+  async function FetchDeviceCount() {
+    setIsLoading(true);
+    try {
+      // curl -X GET http://localhost:3000/device_count.json -d 'min_vers=1.0.0&os=android&max_vers=2'
+      const BASE_URL = 'http://localhost:3000'
+      const response = await fetch(`${BASE_URL}/device_count.json?` + new URLSearchParams({
         os: os,
         min_vers: minOSVersion,
         max_vers: maxOSVersion
-      }})
-      .then((response) => {
-        setDeviceCount( +response.data[0].count);
-        setQueryMinVers( response.data[0].min_vers);
-        setQueryMaxVers( response.data[0].max_vers);
-        setQueryOs( response.data[0].os);
-      })
-      .catch(function (error) {
-        if (error.response) {
-          setHttpErrorMsg(`Error ${error.response.status} ${error.response.data}`)
-        } else if (error.request) {
-          setHttpErrorMsg(`Error ${error.request}`)
-        } else {
-          setHttpErrorMsg(`Error ${error.message}`)
-        }
-      });
+      }));
+      const data = await response.json();
+
+      const result = data[0]
+      setDeviceCount( +result.count);
+      setQueryMinVers(result.min_vers);
+      setQueryMaxVers(result.max_vers);
+      setQueryOs( result.os);
+      } catch(ex) {
+        console.log(ex)
+      } finally {
+        setIsLoading(false)
+      }
+  }
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    FetchDeviceCount();
   };
 
   return (
@@ -84,7 +86,9 @@ const DeviceCountReport = () => {
             {httpErrorMsg}
           </p>
       }
-      {deviceCount !== null && 
+      {isLoading && <p>Loading...</p>}
+      {!isLoading && deviceCount === 0 && <p>No devices found.</p>}
+      {!isLoading && deviceCount > 0 && 
         <>
           <p>
             Total number of {queryOs} devices from version {queryMinVers} to version {queryMaxVers}:
