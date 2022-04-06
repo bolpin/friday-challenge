@@ -1,4 +1,5 @@
 import React from "react";
+import EditablePlayer from "./EditablePlayer"
 import Player from "./Player"
 import './PlayerList.css'
 
@@ -24,10 +25,12 @@ function PlayerList(props) {
     <>
       <ul className='player-list'>
         {props.items.map( (player) => (
-          <Player
+          <EditablePlayer
             key={player.id}
-            first_name={player.first_name}
-            last_name={player.last_name}
+            id={player.id}
+            firstName={player.first_name}
+            lastName={player.last_name}
+            birthdate={player.birthdate}
             age={ageInYears(player.birthdate)}
             gender={player.gender}
           />
