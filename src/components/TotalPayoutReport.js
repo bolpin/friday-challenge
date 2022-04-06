@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import './Report.css'
 
 const TotalPayoutReport = () => {
@@ -11,7 +11,7 @@ const TotalPayoutReport = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null)
 
-  async function FetchTotalPayout() {
+  const FetchTotalPayout = useCallback( async () => {
     setIsLoading(true);
 
     const BASE_URL = 'http://localhost:3000'
@@ -39,12 +39,16 @@ const TotalPayoutReport = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [minPlayerAge, maxPlayerAge]);
 
   const submitHandler = (event) => {
     event.preventDefault();
     FetchTotalPayout();
   };
+
+  useEffect(() => {
+    FetchTotalPayout();
+  }, [FetchTotalPayout]);
 
   const minAgeChangedHandler = (event) => {
     setMinPlayerAge(event.target.value);

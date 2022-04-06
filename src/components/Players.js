@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import PlayerList from "./PlayerList"
+import AddPlayer from "./AddPlayer"
 import Card from "../UI/Card"
 import './Players.css'
 
@@ -28,8 +29,26 @@ const Players = () => {
     });
   }, []);
 
+  async function addPlayerHandler(player) {
+    console.log(player);
+    const response = await fetch(`${BASE_URL}/players.json`, {
+      method: "POST",
+      body: JSON.stringify({
+        player: player
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+
   return (
     <>
+      <Card className='add-player'>
+        <AddPlayer onAddPlayer={addPlayerHandler}/>
+      </Card>
       <Card className='players'>
         <PlayerList items={players} />
       </Card>

@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import './Report.css'
 
 const DeviceCountReport = () => {
-
 
   const [minOSVersion, setMinOSVersion] = useState('0.0.0');
   const [maxOSVersion, setMaxOSVersion] = useState('1.0.0');
@@ -26,7 +25,7 @@ const DeviceCountReport = () => {
     setOs(event.target.value);
   }
 
-  async function FetchDeviceCount() {
+  const FetchDeviceCount = useCallback( async () => {
     setIsLoading(true);
     try {
       // curl -X GET http://localhost:3000/device_count.json -d 'min_vers=1.0.0&os=android&max_vers=2'
@@ -48,12 +47,17 @@ const DeviceCountReport = () => {
       } finally {
         setIsLoading(false)
       }
-  }
+  }, [os, minOSVersion, maxOSVersion]);
 
   const submitHandler = (event) => {
     event.preventDefault();
     FetchDeviceCount();
   };
+
+  useEffect(() => {
+    FetchDeviceCount();
+  }, [FetchDeviceCount]);
+
 
   return (
     <div className='report-form'>
