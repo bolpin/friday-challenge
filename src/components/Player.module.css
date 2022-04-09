@@ -1,4 +1,6 @@
 .player {
+  border-radius: 12px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -6,7 +8,7 @@
   padding: 0.5rem;
   margin: 1rem 0;
   border-radius: 12px;
-  background-color: #4b4b4b;
+  background-color: #664974;
 }
 
 .player__name {
@@ -27,30 +29,28 @@
   color: white;
 }
 
-.player__gender {
-  font-size: 1rem;
+.player__attribute {
   font-weight: bold;
   color: white;
-  background-color: #40005d;
-  border: 1px solid white;
   margin-left: 0.5rem;
   padding: 0.5rem;
-  border-radius: 12px;
-}
-
-.player__age {
-  font-size: 1rem;
-  font-weight: bold;
-  color: white;
-  background-color: #1a8279;
-  border: 1px solid white;
-  margin-left: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 12px;
 }
 
 button {
   margin-left: 0.5rem;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #40005d;
+  background-color: #40005d;
+  color: white;
+  border-radius: 4px;
+}
+  
+button:hover,
+button:active {
+  background-color: #510674;
+  border-color: #510674;
 }
 
 @media (min-width: 580px) {
@@ -69,4 +69,72 @@ button {
     font-size: 1.25rem;
     padding: 0.5rem 1.5rem;
   }
+}
+
+.error {
+  color: red;
+}
+
+.form {
+  background-color: #a892ee;
+  padding: 1rem;
+  margin: 2rem auto;
+  width: 50rem;
+  max-width: 95%;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+}
+
+.form button {
+  font: inherit;
+  cursor: pointer;
+  padding: 1rem 2rem;
+  border: 1px solid #40005d;
+  background-color: #40005d;
+  color: white;
+  border-radius: 12px;
+  margin-right: 1rem;
+}
+
+.form button:hover,
+.form button:active {
+  background-color: #510674;
+  border-color: #510674;
+}
+
+.form__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.form__control label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form__control input {
+  font: inherit;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 12rem;
+  max-width: 100%;
+}
+
+.form__control select {
+  font: inherit;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 10rem;
+  max-width: 100%;
+}
+
+.form__actions {
+  text-align: right;
 }

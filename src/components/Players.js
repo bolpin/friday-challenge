@@ -1,57 +1,110 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
-import PlayerList from "./PlayerList"
-import AddPlayer from "./AddPlayer"
-import Card from "../UI/Card"
-import './Players.css'
 
-const Players = () => {
+import PlayerList from "./PlayerList";
+import NewPlayer from "./NewPlayer";
+import styles from './Players.module.css';
+import useHttp from '../hooks/use-http';
+import apiRoot from '../config'
 
-  const BASE_URL = 'http://localhost:3000'
+const Players = (props) => {
 
-  const DUMMY_PLAYERS = [
-    {id:1,first_name:"Suz",last_name:"Who",birthdate: new Date(1980,3, 25),gender:
-      {id:1,name:"female"},
-    },
-    {id:2,first_name:"Bev",last_name:"Who",birthdate: new Date(1980,3, 25),gender:
-      {id:1,name:"female"},
-    },
-    {id:3,first_name:"Cindy-Lou",last_name:"Who",birthdate: new Date(1980,3, 25),gender:
-      {id:1,name:"female"},
-    }
-  ];
-
-  const [players, setPlayers] = useState(DUMMY_PLAYERS);
+  const [players, setPlayers] = useState([]);
+  const { isLoadingPlayerList, fetchPlayersError, sendRequest: fetchPlayers } = useHttp();
+  const { isLoadingNewPlayer, postNewPlayerError, sendRequest: postPlayer } = useHttp();
+  const { isLoadingDeletePlayer, deleteNewPlayerError, sendRequest: deletePlayer } = useHttp();
+  const { isLoadingUpdatePlayer, updateNewPlayerError, sendRequest: patchPlayer } = useHttp();
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/players.json`).then((response) => {
-      setPlayers(response.data);
-    });
-  }, []);
+    const processFetchedPlayers = (fetchedPlayers) => {
+      setPlayers(fetchedPlayers);
+    };
 
-  async function addPlayerHandler(player) {
-    console.log(player);
-    const response = await fetch(`${BASE_URL}/players.json`, {
-      method: "POST",
-      body: JSON.stringify({
-        player: player
-      }),
-      headers: {
-        'Content-Type': 'application/json'
+    fetchPlayers(
+      { url: `${apiRoot}/players.json` },
+      processFetchedPlayers
+    );
+  }, [fetchPlayers]);
+
+  function addPlayerHandler(player) {
+    postPlayer(
+      {
+        url: `${apiRoot}/players.json`,
+        method: "POST",
+        body: {
+          player: player
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      },
+      (newPlayer) => {
+        newPlayer.key = newPlayer.id;
+        setPlayers(prevPlayers => [newPlayer, ...prevPlayers]);
       }
-    });
-    const data = await response.json();
-    console.log(data);
+    );
+  }
+  
+  function updatePlayerHandler(player) {
+    const id = player.id;
+    delete player.id;
+    patchPlayer(
+      {
+        url: `${apiRoot}/players/${id}.json`,
+        method: "PATCH",
+        body: {
+          player: player
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      },
+      () => {}
+    );
+  }
+  
+  function deletePlayerHandler(player) {
+    setPlayers(prevPlayers => prevPlayers.filter(
+      p => p.id !== player.id
+    ));
+
+    deletePlayer(
+      {
+        url: `${apiRoot}/players/${player.id}.json`,
+        method: "DELETE",
+      },
+      () => {}
+    );
   }
 
+  let newPlayerContent = ''
+  if (isLoadingNewPlayer) {
+    newPlayerContent = <p className={fallback}>Loading...</p>
+  }
+  if (postNewPlayerError) {
+    newPlayerContent = <p className={styles.error}>{postNewPlayerError}</p>
+  }
+  
+  let playersContent = <p className={styles.fallback}>No players found.</p>
+  if (isLoadingPlayerList) {
+    playersContent = <p className={fallback}>Loading...</p>
+  }
+  if (fetchPlayersError) {
+    playersContent = <p className={styles.error}>{fetchPlayersError}</p>
+  }
+  if (!isLoadingPlayerList && players.length > 0) {
+    playersContent =
+      <PlayerList
+        onDeletePlayer={deletePlayerHandler}
+        onUpdatePlayer={updatePlayerHandler}
+        items={players} />
+  }
   return (
     <>
-      <Card className='add-player'>
-        <AddPlayer onAddPlayer={addPlayerHandler}/>
-      </Card>
-      <Card className='players'>
-        <PlayerList items={players} />
-      </Card>
+      <div className={styles.card}>
+        <NewPlayer onAddPlayer={addPlayerHandler}/>
+        {newPlayerContent}
+        {playersContent}
+      </div>
     </>
   );
 };

@@ -11,8 +11,6 @@ function AddPlayer(props) {
   function submitHandler(event) {
     event.preventDefault();
 
-    // could add validation here...
-
     const player = {
       first_name: firstNameRef.current.value,
       last_name: lastNameRef.current.value,

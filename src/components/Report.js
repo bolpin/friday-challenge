@@ -1,17 +1,17 @@
 import React from "react";
-import Card from "../UI/Card"
+// import Card from "../UI/Card"
 import TotalPayoutReport from "./TotalPayoutReport"
 import DeviceCountReport from "./DeviceCountReport"
-import './Report.css'
+import styles from './Report.module.css'
 
 const Report = () => {
 
   return (
     <>
-      <Card className='report'>
+      <div className={styles.reports}>
         <TotalPayoutReport />
         <DeviceCountReport />
-      </Card>
+      </div>
     </>
   );
 };

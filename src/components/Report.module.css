@@ -1,9 +1,8 @@
 .error {
   color: red;
-  font-size: 3em;
 }
 
-.report-form {
+.form {
   background-color: #a892ee;
   padding: 1rem;
   margin: 2rem auto;
@@ -14,7 +13,7 @@
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
 }
 
-.report-form button {
+.form button {
   font: inherit;
   cursor: pointer;
   padding: 1rem 2rem;
@@ -25,24 +24,46 @@
   margin-right: 1rem;
 }
 
-.report-form button:hover,
-.report-form button:active {
+.form button:hover,
+.form button:active {
   background-color: #510674;
   border-color: #510674;
 }
 
-.report-form button.alternative {
+.form button.alternative {
   color: #220131;
   border-color: transparent;
   background-color: transparent;
 }
 
-.report-form button.alternative:hover,
-.report-form button.alternative:active {
+.form button.alternative:hover,
+.form button.alternative:active {
   background-color: #ddb3f8;
 }
 
+button:disabled,
+button:disabled:hover,
+button:disabled:active {
+  background-color: #e0bff4;
+  color: #948585;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
 .report {
+  border-radius: 12px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+  color: black;
+  padding: 1rem;
+  background-color: white;
+  margin: 2rem auto;
+  width: 50rem;
+  max-width: 95%;
+}
+
+.reports {
+  border-radius: 12px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
   color: white;
   padding: 1rem;
   background-color: rgb(31, 31, 31);
@@ -51,7 +72,7 @@
   max-width: 95%;
 }
 
-.report-form__controls {
+.form__controls {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -59,13 +80,22 @@
   text-align: left;
 }
 
-.report-form__control label {
+.form__control label {
   font-weight: bold;
   margin-bottom: 0.5rem;
   display: block;
 }
 
-.report-form__control input {
+.form__control input {
+  font: inherit;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 12rem;
+  max-width: 100%;
+}
+
+.form__control select {
   font: inherit;
   padding: 0.5rem;
   border-radius: 6px;
@@ -74,15 +104,6 @@
   max-width: 100%;
 }
 
-.report-form__control select {
-  font: inherit;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 8rem;
-  max-width: 100%;
-}
-
-.report-form__actions {
+.form__actions {
   text-align: right;
 }

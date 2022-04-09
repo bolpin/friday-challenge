@@ -1,107 +1,144 @@
-import React, { useState, useEffect, useCallback } from "react";
-import './Report.css'
+import React, { useState, useEffect } from "react";
+import styles from './Report.module.css';
+import useHttp from '../hooks/use-http';
+import useInput from '../hooks/use-input';
 
 const DeviceCountReport = () => {
 
-  const [minOSVersion, setMinOSVersion] = useState('0.0.0');
-  const [maxOSVersion, setMaxOSVersion] = useState('1.0.0');
   const [os, setOs] = useState('android');
   const [deviceCount, setDeviceCount] = useState(0);
-  const [queryMinVers, setQueryMinVers] = useState(null);
-  const [queryMaxVers, setQueryMaxVers] = useState(null);
-  const [queryOs, setQueryOs] = useState(null);
-  const [httpErrorMsg, setHttpErrorMsg] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const minOSVersionChangedHandler = (event) => {
-    setMinOSVersion(event.target.value);
+  const { isLoading, httpError, sendRequest: fetchDeviceCount } = useHttp();
+
+  // from https://semver.org/
+  const isSemVer = (str) => {
+    return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/.test(str);
+  }
+  const semVerErrMsg = "Version format incorrect."
+
+  const {
+    value: minVersionValue,
+    isValid: minVersionIsValid,
+    hasError: minVersionHasError,
+    valueChangeHandler: minVersionChangedHandler,
+    blurHandler: minVersionBlurHandler,
+    reset: resetMinVersion,
+  } = useInput(isSemVer);
+
+  const {
+    value: maxVersionValue,
+    isValid: maxVersionIsValid,
+    hasError: maxVersionHasError,
+    valueChangeHandler: maxVersionChangedHandler,
+    blurHandler: maxVersionBlurHandler,
+    reset: resetMaxVersion,
+  } = useInput(isSemVer);
+
+
+  const requestOptions = {
+    url: `http://localhost:3000/device_count.json?os=${os}&min_vers=${minVersionValue}&max_vers=${maxVersionValue}`,
+  };
+  
+  const processDeviceCountResult = (deviceCountResult) => {
+    setDeviceCount(+deviceCountResult[0].count);
   }
 
-  const maxOSVersionChangedHandler = (event) => {
-    setMaxOSVersion(event.target.value);
+  // useEffect(() => {
+  //   fetchDeviceCount(requestOptions, processDeviceCountResult);
+  // }, [fetchDeviceCount]);
+
+  let formIsValid = false;
+
+  if (minVersionIsValid && maxVersionIsValid) {
+    formIsValid = true;
   }
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+    if (!formIsValid) { return; }
+
+    fetchDeviceCount(requestOptions, processDeviceCountResult);
+  };
 
   const osChangedHandler = (event) => {
     setOs(event.target.value);
   }
 
-  const FetchDeviceCount = useCallback( async () => {
-    setIsLoading(true);
-    try {
-      // curl -X GET http://localhost:3000/device_count.json -d 'min_vers=1.0.0&os=android&max_vers=2'
-      const BASE_URL = 'http://localhost:3000'
-      const response = await fetch(`${BASE_URL}/device_count.json?` + new URLSearchParams({
-        os: os,
-        min_vers: minOSVersion,
-        max_vers: maxOSVersion
-      }));
-      const data = await response.json();
+  let resultContent = <p>No devices found.</p>
 
-      const result = data[0]
-      setDeviceCount( +result.count);
-      setQueryMinVers(result.min_vers);
-      setQueryMaxVers(result.max_vers);
-      setQueryOs( result.os);
-      } catch(ex) {
-        console.log(ex)
-      } finally {
-        setIsLoading(false)
-      }
-  }, [os, minOSVersion, maxOSVersion]);
+  if (deviceCount > 0) {
+    resultContent = 
+      <>
+        <p>
+          Total number of {os} devices from version {minVersionValue} to version {maxVersionValue}:
+        </p>
+        <h1>
+          {deviceCount}
+        </h1>
+      </>
+  }
 
-  const submitHandler = (event) => {
-    event.preventDefault();
-    FetchDeviceCount();
-  };
+  if (httpError) {
+    resultContent = <div className={styles.error}>{httpError}</div>
+  }
 
-  useEffect(() => {
-    FetchDeviceCount();
-  }, [FetchDeviceCount]);
-
+  if (isLoading) {
+    resultContent = <p>Loading...</p>
+  }
 
   return (
-    <div className='report-form'>
+    <div className={styles.form}>
       <form onSubmit={submitHandler}>
-        <div className='report-form__controls'>
-          <div className='report-form__control'>
+        <div className={styles.form__controls}>
+          {minVersionHasError} {maxVersionHasError}
+
+          <div className={styles.form__control}>
             <label>OS</label>
             <select type="select" value={os} onChange={osChangedHandler}>
               <option value="android">Android</option>
               <option value="ios">iOS</option>
             </select>
           </div>
-          <div className='report-form__control'>
-            <label>Minimum player version</label>
-            <input type="text" value={minOSVersion} onChange={minOSVersionChangedHandler}></input>
+
+          <div className={styles.form__control}>
+            <label>Minimum OS version (e.g. 1.5.0)</label>
+            <input
+              type="text"
+              value={minVersionValue}
+              onChange={minVersionChangedHandler}
+              onBlur={minVersionBlurHandler}
+            />
+            {minVersionHasError}
+            {minVersionHasError && <div className={styles.error}>
+                {semVerErrMsg}
+              </div>}
           </div>
 
-          <div className='report-form__control'>
-            <label>Maximum OS version</label>
-            <input type="text" value={maxOSVersion} onChange={maxOSVersionChangedHandler}></input>
+          <div className={styles.form__control}>
+            <label>Maximum OS version (e.g. 1.5.0)</label> 
+            <input
+              type="text"
+              value={maxVersionValue}
+              onChange={maxVersionChangedHandler}
+              onBlur={maxVersionBlurHandler}
+            />
+            {maxVersionHasError}
+            {maxVersionHasError && <div className={styles.error}>
+              {semVerErrMsg}
+              </div>}
           </div>
 
-          <div className='report-form__actions'>
-            <button type='submit'>Get device count</button>
-          </div>
+        </div>
+        <div className={styles.form__actions}>
+            <button
+              type='submit'
+              disabled={!formIsValid}>
+                Get device count
+            </button>
         </div>
       </form>
-      {httpErrorMsg !== null &&
-          <p className='error'>
-            {httpErrorMsg}
-          </p>
-      }
-      {isLoading && <p>Loading...</p>}
-      {!isLoading && deviceCount === 0 && <p>No devices found.</p>}
-      {!isLoading && deviceCount > 0 && 
-        <>
-          <p>
-            Total number of {queryOs} devices from version {queryMinVers} to version {queryMaxVers}:
-          </p>
-          <h1>
-            {deviceCount}
-          </h1>
-        </>
-      }
+      {resultContent}
     </div>
   );
 };

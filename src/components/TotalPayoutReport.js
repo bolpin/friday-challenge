@@ -1,66 +1,51 @@
-import React, { useState, useEffect, useCallback } from "react";
-import './Report.css'
+import React, { useState, useEffect } from "react";
+import styles from './Report.module.css';
+import useHttp from '../hooks/use-http';
 
 const TotalPayoutReport = () => {
 
   const [minPlayerAge, setMinPlayerAge] = useState(14);
-  const [maxPlayerAge, setMaxPlayerAge] = useState(150);
+  const [maxPlayerAge, setMaxPlayerAge] = useState(99);
+
   const [totalPayout, setTotalPayout] = useState(null);
   const [payoutMinAge, setPayoutMinAge] = useState(14);
-  const [payoutMaxAge, setPayoutMaxAge] = useState(150);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null)
+  const [payoutMaxAge, setPayoutMaxAge] = useState(99);
 
-  const FetchTotalPayout = useCallback( async () => {
-    setIsLoading(true);
+  const { isLoading, error, sendRequest: fetchPayout } = useHttp();
 
-    const BASE_URL = 'http://localhost:3000'
-    
-    try {
-      const response = await fetch(`${BASE_URL}/total_payout.json?` +
-        new URLSearchParams({ 
-          min_age: minPlayerAge,
-          max_age: maxPlayerAge
-        }));
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const result = data[0];
-
-      setTotalPayout( +result.amount);
-      setPayoutMinAge( +result.min_age);
-      setPayoutMaxAge( +result.max_age);
-    } catch(ex) {
-      console.log(ex)
-      setError(ex.message)
-    } finally {
-      setIsLoading(false)
+  const processPayoutResult = (payoutResult) => {
+      setTotalPayout( +payoutResult[0].amount);
+      setPayoutMinAge( +payoutResult[0].min_age);
+      setPayoutMaxAge( +payoutResult[0].max_age);
     }
-  }, [minPlayerAge, maxPlayerAge]);
 
-  const submitHandler = (event) => {
-    event.preventDefault();
-    FetchTotalPayout();
+  const payoutRequestOptions = {
+    url:`http://localhost:3000/total_payout.json?min_age=${minPlayerAge}&max_age=${maxPlayerAge}`
   };
 
   useEffect(() => {
-    FetchTotalPayout();
-  }, [FetchTotalPayout]);
+    fetchPayout( payoutRequestOptions, processPayoutResult);
+  }, [fetchPayout]);
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    fetchPayout( payoutRequestOptions, processPayoutResult);
+  };
 
   const minAgeChangedHandler = (event) => {
-    setMinPlayerAge(event.target.value);
+    const newMinAge = event.target.value;
+    setMinPlayerAge(newMinAge); 
   }
 
   const maxAgeChangedHandler = (event) => {
-    setMaxPlayerAge(event.target.value);
+    const newMaxAge = event.target.value;
+    setMaxPlayerAge(newMaxAge);
   }
 
-  let content = <p>No payout.</p>
+  let resultContent = <p>No payout.</p>
+
   if (totalPayout > 0) {
-    content = 
+    resultContent = 
       <>
         Total payout for players aged {payoutMinAge}-{payoutMaxAge}:
         <h1>
@@ -73,34 +58,47 @@ const TotalPayoutReport = () => {
   }
 
   if (error) {
-    content = <p>{error}</p>
+    resultContent = <p className='error'>{error}</p>
   }
+
   if (isLoading) {
-    content = <p>Loading...</p>
+    resultContent = <p>Loading...</p>
   }
 
   return (
-    <div className='report-form'>
+    <div className={styles.form}>
       <form onSubmit={submitHandler}>
-        <div className='report-form__controls'>
-          <div className='report-form__control'>
+        <div className={styles.form__controls}>
+          <div className={styles.form__control}>
             <label>Minimum player age</label>
-            <input type="number" value={minPlayerAge} onChange={minAgeChangedHandler}></input>
+            <input
+              type="number"
+              value={minPlayerAge}
+              min="14"
+              max="120"
+              onChange={minAgeChangedHandler}
+            />
           </div>
 
-          <div className='report-form__control'>
+          <div className={styles.form__control}>
             <label>Maximum player age</label>
-            <input type="number" value={maxPlayerAge} onChange={maxAgeChangedHandler}></input>
+            <input
+              type="number"
+              min="14"
+              max="120"
+              value={maxPlayerAge}
+              onChange={maxAgeChangedHandler}
+            />
           </div>
         </div>
-
-        <div className='report-form__controls'>
-          <div className='report-form__control'>
-            <button type='submit'>Get total payout</button>
-          </div>
+        <div className={styles.form__actions}>
+          <button type='submit'>
+            Get total payout
+          </button>
         </div>
       </form>
-      { content }
+ 
+      {resultContent}
     </div>
   );
 };
