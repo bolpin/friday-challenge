@@ -4,7 +4,18 @@ import styles from './Form.module.css';
 
 function NewPlayer(props) {
 
-  const nameErrorMsg = "Name is too short."
+  const nameTooShortMsg = "Name is too short."
+  const requiredFieldMsg = "Required."
+  const minAgeMsg = "Players must be 14 years old."
+  
+  const validateOldEnough = (dob) => {
+    // leap-years not included, so could add three days for the approx.
+    // number of leap years in 14 years
+    const threeDays = 3 * 24 * 60 * 60 * 1000;
+    const approx14YrsInMilliseconds = 14 * 365 * 24 * 60 * 60 * 1000 + threeDays;
+    const ageInMilliseconds = new Date() - new Date(dob);
+    return ageInMilliseconds > approx14YrsInMilliseconds;
+  }
 
   const {
     value: firstNameValue,
@@ -31,7 +42,7 @@ function NewPlayer(props) {
     valueChangeHandler: birthdateChangedHandler,
     blurHandler: birthdateBlurHandler,
     reset: resetBirthdate,
-  } = useInput((dob) => new Date(dob) < new Date('2008-04-08'));
+  } = useInput(validateOldEnough);
 
   const {
     value: genderIdValue,
@@ -40,15 +51,13 @@ function NewPlayer(props) {
     valueChangeHandler: genderIdChangedHandler,
     blurHandler: genderIdBlurHandler,
     reset: resetGenderId,
-  } = useInput((genderId) => true);
-
-  const birthdateRef = useRef('');
-  const genderRef = useRef('');
+  } = useInput( genderId => genderId > 0 && genderId < 4);
 
   const resetForm = () => {
     resetFirstName();
     resetLastName();
     resetBirthdate();
+    resetGenderId();
   }
 
   function submitHandler(event) {
@@ -79,7 +88,7 @@ function NewPlayer(props) {
               onBlur={firstNameBlurHandler}
             />
             {firstNameHasError && <div className={styles.error}>
-              {nameErrorMsg}
+              {nameTooShortMsg}
             </div>}
           </div>
 
@@ -92,7 +101,7 @@ function NewPlayer(props) {
               onBlur={lastNameBlurHandler}
             />
             {lastNameHasError && <div className={styles.error}>
-              {nameErrorMsg}
+              {nameTooShortMsg}
             </div>}
           </div>
 
@@ -102,13 +111,14 @@ function NewPlayer(props) {
               value={genderIdValue}
               onChange={genderIdChangedHandler}
               onBlur={genderIdBlurHandler}
-              >
+            >
+              <option value="0">Select</option>
               <option value="1">Female</option>
               <option value="2">Male</option>
               <option value="3">Non-binary</option>
             </select>
             {genderIdHasError && <div className={styles.error}>
-              Please select.
+              {requiredFieldMsg}
             </div>}
           </div>
 
@@ -121,7 +131,7 @@ function NewPlayer(props) {
               onBlur={birthdateBlurHandler}
             />
             {birthdateHasError && <div className={styles.error}>
-              Please select.
+              {minAgeMsg}
             </div>}
           </div>
         </div>

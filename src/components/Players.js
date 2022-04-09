@@ -8,6 +8,13 @@ import apiRoot from '../config';
 
 const Players = (props) => {
 
+  const alphabeticalByName = (a,b) => {
+    if (a.lastName === b.lastName) {
+      return a.firstName > b.firstName;
+    }
+    return a.lastName > b.lastName;
+  }
+
   const [players, setPlayers] = useState([]);
   const { isLoadingPlayerList, fetchPlayersError, sendRequest: fetchPlayers } = useHttp();
   const { isLoadingNewPlayer, postNewPlayerError, sendRequest: postPlayer } = useHttp();
@@ -16,7 +23,7 @@ const Players = (props) => {
 
   useEffect(() => {
     const processFetchedPlayers = (fetchedPlayers) => {
-      setPlayers(fetchedPlayers);
+      setPlayers(fetchedPlayers.sort(alphabeticalByName));
     };
 
     fetchPlayers(

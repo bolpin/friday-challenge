@@ -1,15 +1,58 @@
 import React, { useState } from "react"
 import styles from "./Player.module.css"
+import useInput from "../hooks/use-input"
 
 const Player = (props) => {
 
-  const [firstName, setFirstName] = useState(props.firstName);
-  const [lastName, setLastName] = useState(props.lastName);
-  const [genderId, setGenderId] = useState(props.gender.id);
-  const [birthdate, setBirthdate] = useState(new Date(props.birthdate).toISOString().split('T')[0]);
-
   const [editing, setEditing] = useState(false);
-  const [isTouched, setIsTouched] = useState(false);
+
+  const validateOldEnough = (dob) => {
+      // leap-years not included, so could add three days for the approx.
+      // number of leap years in 14 years
+      const threeDays = 3 * 24 * 60 * 60 * 1000;
+      const approx14YrsInMilliseconds = 14 * 365 * 24 * 60 * 60 * 1000 + threeDays;
+      const ageInMilliseconds = new Date() - new Date(dob);
+      return ageInMilliseconds > approx14YrsInMilliseconds;
+    }
+
+    const {
+        value: firstNameValue,
+        isValid: firstNameIsValid,
+        hasError: firstNameHasError,
+        valueChangeHandler: firstNameChangedHandler,
+        blurHandler: firstNameBlurHandler,
+        reset: resetFirstName,
+      } = useInput((name) => name.trim().length > 0, props.firstName);
+    
+      const {
+        value: lastNameValue,
+        isValid: lastNameIsValid,
+        hasError: lastNameHasError,
+        valueChangeHandler: lastNameChangedHandler,
+        blurHandler: lastNameBlurHandler,
+        reset: resetLastName,
+      } = useInput((name) => name.trim().length > 0, props.lastName);
+    
+      const {
+        value: birthdateValue,
+        isValid: birthdateIsValid,
+        hasError: birthdateHasError,
+        valueChangeHandler: birthdateChangedHandler,
+        blurHandler: birthdateBlurHandler,
+        reset: resetBirthdate,
+      } = useInput(
+        validateOldEnough,
+        new Date(props.birthdate).toISOString().split('T')[0]
+      );
+    
+      const {
+        value: genderIdValue,
+        isValid: genderIdIsValid,
+        hasError: genderIdHasError,
+        valueChangeHandler: genderIdChangedHandler,
+        blurHandler: genderIdBlurHandler,
+        reset: resetGenderId,
+      } = useInput( (genderId) => genderId > 0 && genderId < 4, props.gender.id);
 
   function ageInYears(bday) {
     const dob = new Date(bday);
@@ -24,51 +67,38 @@ const Player = (props) => {
       : year_diff - 1;
   }
 
-  const genderName = (id) => {
-    if (id > 2) {
-      return 'non-binary'
-    }
-    return id === 1 ? 'female' : 'male';
-  };
+  const isFormValid = () => {
+    return firstNameIsValid &&
+            lastNameIsValid &&
+            genderIdIsValid &&
+            birthdateIsValid
+  }
 
   const submitHandler = (event) => {
     event.preventDefault();
     const playerId = parseInt(event.target.dataset['playerId'])
-    if (!isTouched) {
+    if (!isFormValid) {
       return;
     }
     props.updatePlayer(
       {
         id: props.id,
-        first_name: firstName,
-        last_name: lastName,
-        gender_id: genderId,
-        birthdate: birthdate
+        first_name: firstNameValue,
+        last_name: lastNameValue,
+        gender_id: genderIdValue,
+        birthdate: birthdateValue
       }
     )
     setEditing(prevEditState => !prevEditState);
   }
 
-  const firstNameChangedHandler = (event) => {
-    setIsTouched(true)
-    setFirstName(event.target.value);
-  }
-
-  const lastNameChangedHandler = (event) => {
-    setIsTouched(true)
-    setLastName(event.target.value);
-  }
-
-  const genderIdChangedHandler = (event) => {
-    setIsTouched(true)
-    setGenderId(event.target.value);
-  }
-
-  const birthdateChangedHandler = (event) => {
-    setIsTouched(true)
-    setBirthdate(event.target.value);
-  }
-
+  const genderName = (genderId) => {
+      switch(`${genderId}`) {
+        case '1': return 'female'
+        case '2': return 'male'
+        default: return 'non-binary'
+      }
+    }
   const deletePlayerHandler = (event) => {
     const playerId = parseInt(event.target.dataset['playerId'])
     props.deletePlayer({id: playerId})
@@ -82,10 +112,10 @@ const Player = (props) => {
   }
 
   const reset = () => {
-    setFirstName(props.firstName);
-    setLastName(props.lastName);
-    setGenderId(props.gender.id);
-    setBirthdate(new Date(props.birthdate).toISOString().split('T')[0]);
+    // setFirstName(props.firstName);
+    // setLastName(props.lastName);
+    // setGenderId(props.gender.id);
+    // setBirthdate(new Date(props.birthdate).toISOString().split('T')[0]);
   }
 
   const cancelEditHandler = (event) => {
@@ -101,20 +131,20 @@ const Player = (props) => {
             <div className={styles.form__control}>
               <input 
                 type='text'
-                value={firstName}
+                value={firstNameValue}
                 onChange={firstNameChangedHandler}
               />
             </div>
             <div className={styles.form__control}>
               <input
                 type='text'
-                value={lastName}
+                value={lastNameValue}
                 onChange={lastNameChangedHandler}
               />
             </div>
             <div className={styles.form__control}>
               <select
-                value={genderId}
+                value={genderIdValue}
                 onChange={genderIdChangedHandler} >
                 <option value='1'>Female</option>
                 <option value='2'>Male</option>
@@ -124,7 +154,7 @@ const Player = (props) => {
             <div className={styles.form__control}>
               <input
                 type='date'
-                value={birthdate}
+                value={birthdateValue}
                 onChange={birthdateChangedHandler}
                 min='1920-01-01'
                 max='2009-01-01'
@@ -144,13 +174,13 @@ const Player = (props) => {
     <li>
       <div className={styles.player}>
         <h2>
-          {firstName} {lastName}
+          {firstNameValue} {lastNameValue}
         </h2>
         <div className={styles.player__attribute}> 
-          {genderName(genderId)}
+          {genderName(genderIdValue)}
         </div>
         <div className={styles.player__attribute}> 
-          {ageInYears(birthdate)} years old
+          {ageInYears(birthdateValue)} years old
         </div>
         <button data-player-id={props.id} onClick={deletePlayerHandler}>Delete</button>
         <button data-player-id={props.id} onClick={editPlayerHandler}>Edit</button>
