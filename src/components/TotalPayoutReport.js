@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from './Report.module.css';
+import styles from './Form.module.css';
 import useHttp from '../hooks/use-http';
 
 const TotalPayoutReport = () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from './Report.module.css';
+import styles from './Form.module.css';
 import useHttp from '../hooks/use-http';
 import useInput from '../hooks/use-input';
 
@@ -14,7 +14,7 @@ const DeviceCountReport = () => {
   const isSemVer = (str) => {
     return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/.test(str);
   }
-  const semVerErrMsg = "Version format incorrect."
+  const semVerErrMsg = "Version format invalid."
 
   const {
     value: minVersionValue,
@@ -91,8 +91,6 @@ const DeviceCountReport = () => {
     <div className={styles.form}>
       <form onSubmit={submitHandler}>
         <div className={styles.form__controls}>
-          {minVersionHasError} {maxVersionHasError}
-
           <div className={styles.form__control}>
             <label>OS</label>
             <select type="select" value={os} onChange={osChangedHandler}>
@@ -109,7 +107,6 @@ const DeviceCountReport = () => {
               onChange={minVersionChangedHandler}
               onBlur={minVersionBlurHandler}
             />
-            {minVersionHasError}
             {minVersionHasError && <div className={styles.error}>
                 {semVerErrMsg}
               </div>}
@@ -123,7 +120,6 @@ const DeviceCountReport = () => {
               onChange={maxVersionChangedHandler}
               onBlur={maxVersionBlurHandler}
             />
-            {maxVersionHasError}
             {maxVersionHasError && <div className={styles.error}>
               {semVerErrMsg}
               </div>}

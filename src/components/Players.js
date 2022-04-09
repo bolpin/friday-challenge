@@ -4,7 +4,7 @@ import PlayerList from "./PlayerList";
 import NewPlayer from "./NewPlayer";
 import styles from './Players.module.css';
 import useHttp from '../hooks/use-http';
-import apiRoot from '../config'
+import apiRoot from '../config';
 
 const Players = (props) => {
 
@@ -78,7 +78,7 @@ const Players = (props) => {
 
   let newPlayerContent = ''
   if (isLoadingNewPlayer) {
-    newPlayerContent = <p className={fallback}>Loading...</p>
+    newPlayerContent = <p className={styles.fallback}>Loading...</p>
   }
   if (postNewPlayerError) {
     newPlayerContent = <p className={styles.error}>{postNewPlayerError}</p>
@@ -86,7 +86,7 @@ const Players = (props) => {
   
   let playersContent = <p className={styles.fallback}>No players found.</p>
   if (isLoadingPlayerList) {
-    playersContent = <p className={fallback}>Loading...</p>
+    playersContent = <p className={styles.fallback}>Loading...</p>
   }
   if (fetchPlayersError) {
     playersContent = <p className={styles.error}>{fetchPlayersError}</p>
