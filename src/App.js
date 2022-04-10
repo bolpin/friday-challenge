@@ -2,6 +2,7 @@ import React from 'react';
 import  { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Players from './components/Players';
+import Offers from './components/Offers/Offers';
 import Report from './components/Report';
 
 function App() {
@@ -12,8 +13,7 @@ function App() {
         <a href='/reports'>Reports</a>
         <a href='/offers'>Offers</a>
         <a href='/offer-targets'>Offer Targets</a>
-        <a href='/players'>Players</a>
-        <a href='/devices'>Devices</a>
+        <a href='/players'>Players & Devices</a>
       </nav>
       <Router>
         <Switch>
@@ -23,17 +23,14 @@ function App() {
           <Route path="/reports">
             <Report />
           </Route>
-          <Route path="/devices">
-            <h1>TODO Devices</h1>
-          </Route>
           <Route path="/players">
             <Players />
           </Route>
           <Route path="/offers">
-            <h1>TODO Offers</h1>
+            <Offers />
           </Route>
           <Route path="/offer-targets">
-            <h1>TODO OfferTargets</h1>
+            OfferTargets
           </Route>
         </Switch>
       </Router>

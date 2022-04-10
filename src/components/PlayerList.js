@@ -1,6 +1,7 @@
 import React from "react";
 import Player from "./Player"
 import styles from './PlayerList.module.css'
+// import Device from './Device.js'
 
 function PlayerList(props) {
 

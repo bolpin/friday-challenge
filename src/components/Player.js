@@ -7,52 +7,53 @@ const Player = (props) => {
   const [editing, setEditing] = useState(false);
 
   const validateOldEnough = (dob) => {
-      // leap-years not included, so could add three days for the approx.
-      // number of leap years in 14 years
-      const threeDays = 3 * 24 * 60 * 60 * 1000;
-      const approx14YrsInMilliseconds = 14 * 365 * 24 * 60 * 60 * 1000 + threeDays;
-      const ageInMilliseconds = new Date() - new Date(dob);
-      return ageInMilliseconds > approx14YrsInMilliseconds;
-    }
+    // we'll add three days for the approx.
+    // number of leap years in 14 years
+    const threeDays = 3 * 24 * 60 * 60 * 1000;
 
-    const {
-        value: firstNameValue,
-        isValid: firstNameIsValid,
-        hasError: firstNameHasError,
-        valueChangeHandler: firstNameChangedHandler,
-        blurHandler: firstNameBlurHandler,
-        reset: resetFirstName,
-      } = useInput((name) => name.trim().length > 0, props.firstName);
-    
-      const {
-        value: lastNameValue,
-        isValid: lastNameIsValid,
-        hasError: lastNameHasError,
-        valueChangeHandler: lastNameChangedHandler,
-        blurHandler: lastNameBlurHandler,
-        reset: resetLastName,
-      } = useInput((name) => name.trim().length > 0, props.lastName);
-    
-      const {
-        value: birthdateValue,
-        isValid: birthdateIsValid,
-        hasError: birthdateHasError,
-        valueChangeHandler: birthdateChangedHandler,
-        blurHandler: birthdateBlurHandler,
-        reset: resetBirthdate,
-      } = useInput(
-        validateOldEnough,
-        new Date(props.birthdate).toISOString().split('T')[0]
-      );
-    
-      const {
-        value: genderIdValue,
-        isValid: genderIdIsValid,
-        hasError: genderIdHasError,
-        valueChangeHandler: genderIdChangedHandler,
-        blurHandler: genderIdBlurHandler,
-        reset: resetGenderId,
-      } = useInput( (genderId) => genderId > 0 && genderId < 4, props.gender.id);
+    const approx14YrsInMilliseconds = 14 * 365 * 24 * 60 * 60 * 1000 + threeDays;
+    const ageInMilliseconds = new Date() - new Date(dob);
+    return ageInMilliseconds > approx14YrsInMilliseconds;
+  }
+
+  const {
+    value: firstNameValue,
+    isValid: firstNameIsValid,
+    hasError: firstNameHasError,
+    valueChangeHandler: firstNameChangedHandler,
+    blurHandler: firstNameBlurHandler,
+    reset: resetFirstName,
+  } = useInput((name) => name.trim().length > 0, props.firstName);
+
+  const {
+    value: lastNameValue,
+    isValid: lastNameIsValid,
+    hasError: lastNameHasError,
+    valueChangeHandler: lastNameChangedHandler,
+    blurHandler: lastNameBlurHandler,
+    reset: resetLastName,
+  } = useInput((name) => name.trim().length > 0, props.lastName);
+
+  const {
+    value: birthdateValue,
+    isValid: birthdateIsValid,
+    hasError: birthdateHasError,
+    valueChangeHandler: birthdateChangedHandler,
+    blurHandler: birthdateBlurHandler,
+    reset: resetBirthdate,
+  } = useInput(
+    validateOldEnough,
+    new Date(props.birthdate).toISOString().split('T')[0]
+  );
+
+  const {
+    value: genderIdValue,
+    isValid: genderIdIsValid,
+    hasError: genderIdHasError,
+    valueChangeHandler: genderIdChangedHandler,
+    blurHandler: genderIdBlurHandler,
+    reset: resetGenderId,
+  } = useInput( (genderId) => genderId > 0 && genderId < 4, props.gender.id);
 
   function ageInYears(bday) {
     const dob = new Date(bday);
@@ -69,9 +70,9 @@ const Player = (props) => {
 
   const isFormValid = () => {
     return firstNameIsValid &&
-            lastNameIsValid &&
-            genderIdIsValid &&
-            birthdateIsValid
+      lastNameIsValid &&
+      genderIdIsValid &&
+      birthdateIsValid
   }
 
   const submitHandler = (event) => {
@@ -93,12 +94,13 @@ const Player = (props) => {
   }
 
   const genderName = (genderId) => {
-      switch(`${genderId}`) {
-        case '1': return 'female'
-        case '2': return 'male'
-        default: return 'non-binary'
-      }
+    switch(`${genderId}`) {
+      case '1': return 'female'
+      case '2': return 'male'
+      default: return 'non-binary'
     }
+  }
+
   const deletePlayerHandler = (event) => {
     const playerId = parseInt(event.target.dataset['playerId'])
     props.deletePlayer({id: playerId})
@@ -108,18 +110,9 @@ const Player = (props) => {
     setEditing(prevEditState => !prevEditState);
 
     let id = event.target.dataset['playerId']
-    console.log(`editing...${id}`)
-  }
-
-  const reset = () => {
-    // setFirstName(props.firstName);
-    // setLastName(props.lastName);
-    // setGenderId(props.gender.id);
-    // setBirthdate(new Date(props.birthdate).toISOString().split('T')[0]);
   }
 
   const cancelEditHandler = (event) => {
-    reset()
     setEditing(prevEditState => !prevEditState)
   }
 
