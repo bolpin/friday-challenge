@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const alphabeticalByName = (a, b) => {
-  if (a.lastName === b.lastName) {
-    return a.firstName > b.firstName;
+  if (a.last_name === b.last_name) {
+    return a.first_name > b.first_name;
   }
-  return a.lastName > b.lastName;
+  return a.last_name > b.last_name;
 };
 
 const playersSlice = createSlice({
@@ -15,7 +15,7 @@ const playersSlice = createSlice({
   },
   reducers: {
     replacePlayers(state, action) {
-      state.players = action.payload.players.sort(alphabeticalByName);
+      state.players = action.payload.players //.sort(alphabeticalByName);
     },
     addPlayer(state, action) {
       state.changed = true;

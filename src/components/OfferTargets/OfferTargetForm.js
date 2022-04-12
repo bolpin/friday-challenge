@@ -2,13 +2,9 @@ import React, { useState, useEffect } from "react";
 import styles from "./OfferTarget.module.css";
 import formStyles from "../Form.module.css";
 import useInput from "../../hooks/use-input";
-import useLookup from "../../hooks/use-lookup";
+import { locales, operatingSystems, genders } from '../../config';
 
 const OfferTargetForm = (props) => {
-
-  const genders = useLookup('genders').values
-  const locales = useLookup('locales').values
-  const operatingSystems = useLookup('operating_systems').values
 
   const requiredFieldMsg = "Required.";
 
@@ -93,8 +89,6 @@ const OfferTargetForm = (props) => {
     if (!isFormValid) {
       return;
     }
-
-    // const offerId = parseInt(event.target.dataset["offerId"]);
 
     const offerTarget = {
       id: props.id,

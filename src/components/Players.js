@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import PlayerList from "./PlayerList";
 import NewPlayer from "./NewPlayer";
 import styles from "./Players.module.css";
-import { apiRoot } from "../config";
+
 import { deletePlayer, createPlayer, updatePlayer } from '../store/players-actions';
 import { useDispatch, useSelector } from 'react-redux';
 

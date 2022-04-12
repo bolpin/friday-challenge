@@ -11,11 +11,13 @@ function OfferTargetList(props) {
           key={offerTarget.id}
           id={offerTarget.id}
           offerId={offerTarget.offer_id}
-          minAge={offerTarget.min_age}
-          maxAge={offerTarget.max_age}
+          minAge={offerTarget.min_player_age}
+          maxAge={offerTarget.max_player_age}
           genderId={offerTarget.gender_id}
           operatingSystemId={offerTarget.operating_system_id}
-          minOsVersion={offerTarget.min_os_version}
+          minOsMajorVersion={offerTarget.min_os_major_version}
+          minOsMinorVersion={offerTarget.min_os_minor_version}
+          minOsPatchVersion={offerTarget.min_os_patch_version}
           deleteOfferTarget={props.onDeleteOfferTarget}
           updateOfferTarget={props.onUpdateOfferTarget}
         />

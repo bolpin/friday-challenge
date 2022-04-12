@@ -99,7 +99,7 @@ function NewDevice(props) {
               onBlur={playerIdBlurHandler}
             >
               <option value="0">Select</option>
-              {players.map((player) => (
+              {players.sort((a,b) => a.last_name > b.last_name).map((player) => (
                 <option
                   key={player["id"]}
                   value={player["id"]}

@@ -10,6 +10,7 @@ import Playground from "./components/Playground";
 import { useSelector, useDispatch } from "react-redux";
 import Notification from './components/UI/Notification';
 import { fetchPlayers } from './store/players-actions';
+import { fetchOfferTargets } from './store/offer-targets-actions';
 
 function App() {
   const dispatch = useDispatch();
@@ -17,28 +18,17 @@ function App() {
 
   useEffect(() => {
     dispatch(fetchPlayers());
+    dispatch(fetchOfferTargets());
   }, [dispatch]);
 
   const isInitial = true;
 
-  // useEffect(() => {
-  //   if (isInitial) {
-  //     isInitial = false;
-  //     return;
-  //   }
-
-  //   if (cart.changed) {
-  //     dispatch(sendCartData(cart));
-  //   }
-  // }, [cart, dispatch]);
-
   return (
     <>
       <nav>
-        <a href="/playground">Playground</a>
         <a href="/reports">Reports</a>
         <a href="/offers">Offers</a>
-        <a href="/offer-targets">Offer Targets</a>
+        <a href="/offer-targets">Offer Targets & Players Matching</a>
         <a href="/players">Players</a>
         <a href="/devices">Devices</a>
       </nav>
@@ -53,9 +43,6 @@ function App() {
         <Switch>
           <Route exact path="/">
             <Report />
-          </Route>
-          <Route path="/playground">
-            <Playground />
           </Route>
           <Route path="/reports">
             <Report />
