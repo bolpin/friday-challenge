@@ -4,7 +4,7 @@ import OfferList from "./OfferList";
 import styles from './Offers.module.css';
 import NewOffer from "./NewOffer";
 import useHttp from '../../hooks/use-http';
-import apiRoot from '../../config';
+import { apiRoot } from '../../config';
 
 const Offers = (props) => {
 

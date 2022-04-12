@@ -4,7 +4,8 @@ import PlayerList from "./PlayerList";
 import NewPlayer from "./NewPlayer";
 import styles from "./Players.module.css";
 import useHttp from "../hooks/use-http";
-import apiRoot from "../config";
+import { apiRoot } from "../config";
+
 
 const Players = (props) => {
   const alphabeticalByName = (a, b) => {
@@ -15,6 +16,7 @@ const Players = (props) => {
   };
 
   const [players, setPlayers] = useState([]);
+
   const {
     isLoadingPlayerList,
     fetchPlayersError,

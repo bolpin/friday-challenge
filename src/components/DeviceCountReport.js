@@ -11,7 +11,7 @@ const DeviceCountReport = () => {
   const { isLoading, httpError, sendRequest: fetchDeviceCount } = useHttp();
 
   // from https://semver.org/
-  const isSemVer = (str) => {
+  const isValidSemVer = (str) => {
     return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/.test(str);
   }
   const semVerErrMsg = "Version format invalid."
@@ -23,7 +23,7 @@ const DeviceCountReport = () => {
     valueChangeHandler: minVersionChangedHandler,
     blurHandler: minVersionBlurHandler,
     reset: resetMinVersion,
-  } = useInput(isSemVer);
+  } = useInput(isValidSemVer);
 
   const {
     value: maxVersionValue,
@@ -32,7 +32,7 @@ const DeviceCountReport = () => {
     valueChangeHandler: maxVersionChangedHandler,
     blurHandler: maxVersionBlurHandler,
     reset: resetMaxVersion,
-  } = useInput(isSemVer);
+  } = useInput(isValidSemVer);
 
 
   const requestOptions = {
