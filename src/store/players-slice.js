@@ -24,7 +24,7 @@ const playersSlice = createSlice({
     updatePlayer(state, action) {
       state.changed = true;
       const playerId = action.payload.id;
-      const existingPlayer = state.players.find((p) => p.id === id);
+      const existingPlayer = state.players.find((p) => p.id === playerId);
       existingPlayer.gender_id = action.payload.genderId
       existingPlayer.first_name = action.payload.firstName
       existingPlayer.last_name = action.payload.firstName

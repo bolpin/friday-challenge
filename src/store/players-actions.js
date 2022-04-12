@@ -22,7 +22,7 @@ export const deletePlayer = (playerId) => {
       const playersData = await fetchData();
       dispatch(
         playersActions.removePlayer(
-          playersId
+          playerId
         )
       );
     } catch (error) {
