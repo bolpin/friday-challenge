@@ -1,13 +1,12 @@
 import React from "react";
 import Player from "./Player"
 import styles from './PlayerList.module.css'
-// import Device from './Device.js'
 
 function PlayerList(props) {
 
   return (
     <ul className={styles.list}>
-      {props.items.map( (player) => (
+      {props.players.map( (player) => (
         <Player
           key={player.id}
           id={player.id}

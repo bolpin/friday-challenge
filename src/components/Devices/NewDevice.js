@@ -64,12 +64,11 @@ function NewDevice(props) {
 
     const device = {
       model: modelValue,
-      operatingSystemId: operatingSystemIdValue,
-      playerId: playerIdValue,
-      operatingSystemId: operatingSystemIdValue,
+      operating_system_id: operatingSystemIdValue,
+      player_id: playerIdValue,
+      operating_system: operatingSystemIdValue,
       localeId_cents: localeIdValue,
     };
-    debugger
 
     props.onAddDevice(device);
   }

@@ -12,19 +12,11 @@ export const deletePlayer = (playerId) => {
       if (!response.ok) {
         throw new Error("Could not delete player");
       }
-
-      const data = await response.json();
-
-      return data;
     };
 
     try {
-      const playersData = await fetchData();
-      dispatch(
-        playersActions.removePlayer(
-          playerId
-        )
-      );
+      await fetchData();
+      dispatch(playersActions.removePlayer(playerId));
     } catch (error) {
       dispatch(
         uiActions.showNotification({
@@ -37,15 +29,16 @@ export const deletePlayer = (playerId) => {
   };
 };
 
-export const updatePlayer = (player) => {
+export const updatePlayer = (playerData) => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/players.json`, {
-        url: `${apiRoot}/players/${player.id}.json`,
+      const id = playerData.id;
+      delete playerData.id;
+      const response = await fetch(`${apiRoot}/players/${id}.json`, {
         method: "PATCH",
-        body: {
-          player: player,
-        },
+        body: JSON.stringify({
+          player: playerData,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -56,14 +49,14 @@ export const updatePlayer = (player) => {
       }
 
       const data = await response.json();
-
       return data;
     };
 
     try {
-      const playersData = await fetchData();
+      const player = await fetchData();
       dispatch(playersActions.updatePlayer(player));
     } catch (error) {
+      debugger
       dispatch(
         uiActions.showNotification({
           status: "error",
@@ -75,14 +68,14 @@ export const updatePlayer = (player) => {
   };
 };
 
-export const createPlayer = (player) => {
+export const createPlayer = (playerData) => {
   return async (dispatch) => {
     const fetchData = async () => {
       const response = await fetch(`${apiRoot}/players.json`, {
         method: "POST",
-        body: {
-          player: player,
-        },
+        body: JSON.stringify({
+          player: playerData,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -91,20 +84,19 @@ export const createPlayer = (player) => {
       if (!response.ok) {
         throw new Error("Could not create player");
       }
-
       const data = await response.json();
       return data;
     };
 
     try {
-      const playersData = await fetchData();
-      dispatch(playersActions.addPlayer(player));
+      const newPlayer = await fetchData();
+      dispatch(playersActions.addPlayer(newPlayer));
     } catch (error) {
       dispatch(
         uiActions.showNotification({
           status: "error",
           title: "Error",
-          message: "Update player failed",
+          message: "Create player failed",
         })
       );
     }
