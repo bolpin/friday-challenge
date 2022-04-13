@@ -1,22 +1,22 @@
 import { uiActions } from "./ui-slice";
-import { playersActions } from "./players-slice";
+import { devicesActions } from "./devices-slice";
 import { apiRoot } from "../config";
 
-export const deletePlayer = (playerId) => {
+export const deleteDevice = (deviceId) => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/players/${playerId}.json`, {
+      const response = await fetch(`${apiRoot}/devices/${deviceId}.json`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error(`Could not delete player. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not delete device. (${response.status} ${response.statusText})`);
       }
     };
 
     try {
       await fetchData();
-      dispatch(playersActions.removePlayer(playerId));
+      dispatch(devicesActions.removeDevice(deviceId));
     } catch (error) {
       dispatch(
         uiActions.showNotification({
@@ -29,15 +29,15 @@ export const deletePlayer = (playerId) => {
   };
 };
 
-export const updatePlayer = (playerData) => {
+export const updateDevice = (deviceData) => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const id = playerData.id;
-      delete playerData.id;
-      const response = await fetch(`${apiRoot}/players/${id}.json`, {
+      const id = deviceData.id;
+      delete deviceData.id;
+      const response = await fetch(`${apiRoot}/devices/${id}.json`, {
         method: "PATCH",
         body: JSON.stringify({
-          player: playerData,
+          device: deviceData,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export const updatePlayer = (playerData) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Could not update player. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not update device. (${response.status} ${response.statusText})`);
       }
 
       const data = await response.json();
@@ -53,8 +53,8 @@ export const updatePlayer = (playerData) => {
     };
 
     try {
-      const player = await fetchData();
-      dispatch(playersActions.updatePlayer(player));
+      const device = await fetchData();
+      dispatch(devicesActions.updateDevice(device));
     } catch (error) {
       dispatch(
         uiActions.showNotification({
@@ -67,13 +67,13 @@ export const updatePlayer = (playerData) => {
   };
 };
 
-export const createPlayer = (playerData) => {
+export const createDevice = (deviceData) => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/players.json`, {
+      const response = await fetch(`${apiRoot}/devices.json`, {
         method: "POST",
         body: JSON.stringify({
-          player: playerData,
+          device: deviceData,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -81,15 +81,15 @@ export const createPlayer = (playerData) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Could not create player. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not create device. (${response.status} ${response.statusText})`);
       }
       const data = await response.json();
       return data;
     };
 
     try {
-      const newPlayer = await fetchData();
-      dispatch(playersActions.addPlayer(newPlayer));
+      const newDevice = await fetchData();
+      dispatch(devicesActions.addDevice(newDevice));
     } catch (error) {
       dispatch(
         uiActions.showNotification({
@@ -102,13 +102,13 @@ export const createPlayer = (playerData) => {
   };
 };
 
-export const fetchPlayers = () => {
+export const fetchDevices = () => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/players.json`);
+      const response = await fetch(`${apiRoot}/devices.json`);
 
       if (!response.ok) {
-        throw new Error(`Could not fetch players. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not fetch devices. (${response.status} ${response.statusText})`);
       }
 
       const data = await response.json();
@@ -117,10 +117,10 @@ export const fetchPlayers = () => {
     };
 
     try {
-      const playersData = await fetchData();
+      const devicesData = await fetchData();
       dispatch(
-        playersActions.replacePlayers({
-          players: playersData || [],
+        devicesActions.replaceDevices({
+          devices: devicesData || [],
         })
       );
     } catch (error) {

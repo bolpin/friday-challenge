@@ -1,6 +1,6 @@
 import React from 'react';
-import useInput from '../hooks/use-input';
-import styles from './Form.module.css';
+import useInput from '../../hooks/use-input';
+import styles from '../Form.module.css';
 
 function NewPlayer(props) {
 

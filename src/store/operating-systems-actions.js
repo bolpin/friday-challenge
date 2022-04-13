@@ -1,14 +1,14 @@
 import { uiActions } from "./ui-slice";
-import { localesActions } from "./locales-slice";
+import { operatingSystemsActions } from "./operating-systems-slice";
 import { apiRoot } from "../config";
 
-export const fetchLocales = () => {
+export const fetchOperatingSystems = () => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/locales.json`);
+      const response = await fetch(`${apiRoot}/operating_systems.json`);
 
       if (!response.ok) {
-        throw new Error(`Could not fetch locales. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not fetch operating systems. (${response.status} ${response.statusText})`);
       }
 
       const data = await response.json();
@@ -17,10 +17,10 @@ export const fetchLocales = () => {
     };
 
     try {
-      const localesData = await fetchData();
+      const operatingSystemsData = await fetchData();
       dispatch(
-        localesActions.replaceLocales({
-          locales: localesData || [],
+        operatingSystemsActions.replaceOperatingSystems({
+          operatingSystems: operatingSystemsData || [],
         })
       );
     } catch (error) {

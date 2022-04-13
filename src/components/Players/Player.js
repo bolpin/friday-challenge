@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import styles from "./Player.module.css"
-import useInput from "../hooks/use-input"
+import useInput from "../../hooks/use-input"
 // import useDevices from "../hooks/use-devices";
 
 const Player = (props) => {

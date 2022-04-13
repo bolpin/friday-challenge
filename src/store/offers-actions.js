@@ -1,22 +1,22 @@
 import { uiActions } from "./ui-slice";
-import { playersActions } from "./players-slice";
+import { offersActions } from "./offers-slice";
 import { apiRoot } from "../config";
 
-export const deletePlayer = (playerId) => {
+export const deleteOffer = (offerId) => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/players/${playerId}.json`, {
+      const response = await fetch(`${apiRoot}/offers/${offerId}.json`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error(`Could not delete player. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not delete offer. (${response.status} ${response.statusText})`);
       }
     };
 
     try {
       await fetchData();
-      dispatch(playersActions.removePlayer(playerId));
+      dispatch(offersActions.removeOffer(offerId));
     } catch (error) {
       dispatch(
         uiActions.showNotification({
@@ -29,15 +29,15 @@ export const deletePlayer = (playerId) => {
   };
 };
 
-export const updatePlayer = (playerData) => {
+export const updateOffer = (offerData) => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const id = playerData.id;
-      delete playerData.id;
-      const response = await fetch(`${apiRoot}/players/${id}.json`, {
+      const id = offerData.id;
+      delete offerData.id;
+      const response = await fetch(`${apiRoot}/offers/${id}.json`, {
         method: "PATCH",
         body: JSON.stringify({
-          player: playerData,
+          offer: offerData,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export const updatePlayer = (playerData) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Could not update player. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not update offer. (${response.status} ${response.statusText})`);
       }
 
       const data = await response.json();
@@ -53,8 +53,8 @@ export const updatePlayer = (playerData) => {
     };
 
     try {
-      const player = await fetchData();
-      dispatch(playersActions.updatePlayer(player));
+      const offer = await fetchData();
+      dispatch(offersActions.updateOffer(offer));
     } catch (error) {
       dispatch(
         uiActions.showNotification({
@@ -67,13 +67,13 @@ export const updatePlayer = (playerData) => {
   };
 };
 
-export const createPlayer = (playerData) => {
+export const createOffer = (offerData) => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/players.json`, {
+      const response = await fetch(`${apiRoot}/offers.json`, {
         method: "POST",
         body: JSON.stringify({
-          player: playerData,
+          offer: offerData,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -81,15 +81,15 @@ export const createPlayer = (playerData) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Could not create player. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not create offer. (${response.status} ${response.statusText})`);
       }
       const data = await response.json();
       return data;
     };
 
     try {
-      const newPlayer = await fetchData();
-      dispatch(playersActions.addPlayer(newPlayer));
+      const newOffer = await fetchData();
+      dispatch(offersActions.addOffer(newOffer));
     } catch (error) {
       dispatch(
         uiActions.showNotification({
@@ -102,13 +102,13 @@ export const createPlayer = (playerData) => {
   };
 };
 
-export const fetchPlayers = () => {
+export const fetchOffers = () => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/players.json`);
+      const response = await fetch(`${apiRoot}/offers.json`);
 
       if (!response.ok) {
-        throw new Error(`Could not fetch players. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not fetch offers. (${response.status} ${response.statusText})`);
       }
 
       const data = await response.json();
@@ -117,10 +117,10 @@ export const fetchPlayers = () => {
     };
 
     try {
-      const playersData = await fetchData();
+      const offersData = await fetchData();
       dispatch(
-        playersActions.replacePlayers({
-          players: playersData || [],
+        offersActions.replaceOffers({
+          offers: offersData || [],
         })
       );
     } catch (error) {

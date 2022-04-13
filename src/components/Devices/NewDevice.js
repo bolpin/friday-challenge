@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import useInput from '../../hooks/use-input';
 import styles from '../Form.module.css';
 import { useSelector } from 'react-redux';
-import { locales, operatingSystems } from '../../config';
 
 function NewDevice(props) {
 
   const players = useSelector((state) => state.players.players);
+  const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
+  const locales = useSelector((state) => state.locales.locales);
 
   const isValidSemVer = (str) => {
     return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/.test(str);
@@ -99,7 +100,7 @@ function NewDevice(props) {
               onBlur={playerIdBlurHandler}
             >
               <option value="0">Select</option>
-              {players.sort((a,b) => a.last_name > b.last_name).map((player) => (
+              {players.map((player) => (
                 <option
                   key={player["id"]}
                   value={player["id"]}

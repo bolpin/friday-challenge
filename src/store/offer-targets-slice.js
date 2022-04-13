@@ -23,7 +23,6 @@ const offerTargetsSlice = createSlice({
       state.changed = true;
       const updatedOfferTarget = action.payload;
       const existingOfferTarget = state.offerTargets.find((p) => p.id === updatedOfferTarget.id);
-      debugger
       if (existingOfferTarget) {
         existingOfferTarget.gender.id = updatedOfferTarget.gender.id
         existingOfferTarget.gender.name = updatedOfferTarget.gender.name

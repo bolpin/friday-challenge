@@ -1,14 +1,14 @@
 import { uiActions } from "./ui-slice";
-import { localesActions } from "./locales-slice";
+import { gendersActions } from "./genders-slice";
 import { apiRoot } from "../config";
 
-export const fetchLocales = () => {
+export const fetchGenders = () => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/locales.json`);
+      const response = await fetch(`${apiRoot}/genders.json`);
 
       if (!response.ok) {
-        throw new Error(`Could not fetch locales. (${response.status} ${response.statusText})`);
+        throw new Error(`Could not fetch genders. (${response.status} ${response.statusText})`);
       }
 
       const data = await response.json();
@@ -17,10 +17,10 @@ export const fetchLocales = () => {
     };
 
     try {
-      const localesData = await fetchData();
+      const gendersData = await fetchData();
       dispatch(
-        localesActions.replaceLocales({
-          locales: localesData || [],
+        gendersActions.replaceGenders({
+          genders: gendersData || [],
         })
       );
     } catch (error) {

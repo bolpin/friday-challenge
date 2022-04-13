@@ -4,7 +4,7 @@ import PlayerList from "./PlayerList";
 import NewPlayer from "./NewPlayer";
 import styles from "./Players.module.css";
 
-import { deletePlayer, createPlayer, updatePlayer } from '../store/players-actions';
+import { deletePlayer, createPlayer, updatePlayer } from '../../store/players-actions';
 import { useDispatch, useSelector } from 'react-redux';
 
 const Players = (props) => {

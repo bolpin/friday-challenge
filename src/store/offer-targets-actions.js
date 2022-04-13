@@ -10,7 +10,7 @@ export const deleteOfferTarget = (offerTargetId) => {
       });
 
       if (!response.ok) {
-        throw new Error("Could not delete offerTarget");
+        throw new Error(`Could not delete offer target. (${response.status} ${response.statusText})`);
       }
     };
 
@@ -22,7 +22,7 @@ export const deleteOfferTarget = (offerTargetId) => {
         uiActions.showNotification({
           status: "error",
           title: "Error",
-          message: "Delete offerTarget failed",
+          message: error.message,
         })
       );
     }
@@ -45,7 +45,7 @@ export const updateOfferTarget = (offerTargetData) => {
       });
 
       if (!response.ok) {
-        throw new Error("Could not update offerTarget");
+        throw new Error(`Could not update offer target. (${response.status} ${response.statusText})`);
       }
 
       const data = await response.json();
@@ -56,12 +56,11 @@ export const updateOfferTarget = (offerTargetData) => {
       const offerTarget = await fetchData();
       dispatch(offerTargetsActions.updateOfferTarget(offerTarget));
     } catch (error) {
-      debugger
       dispatch(
         uiActions.showNotification({
           status: "error",
           title: "Error",
-          message: "Update offerTarget failed",
+          message: error.message,
         })
       );
     }
@@ -82,7 +81,7 @@ export const createOfferTarget = (offerTargetData) => {
       });
 
       if (!response.ok) {
-        throw new Error("Could not create offerTarget");
+        throw new Error(`Could not create offer target. (${response.status} ${response.statusText})`);
       }
       const data = await response.json();
       return data;
@@ -96,7 +95,7 @@ export const createOfferTarget = (offerTargetData) => {
         uiActions.showNotification({
           status: "error",
           title: "Error",
-          message: "Create offerTarget failed",
+          message: error.message,
         })
       );
     }
@@ -109,7 +108,7 @@ export const fetchOfferTargets = () => {
       const response = await fetch(`${apiRoot}/offer_targets.json`);
 
       if (!response.ok) {
-        throw new Error("Could not fetch offerTargets");
+        throw new Error(`Could not fetch offer target. (${response.status} ${response.statusText})`);
       }
 
       const data = await response.json();
@@ -129,7 +128,7 @@ export const fetchOfferTargets = () => {
         uiActions.showNotification({
           status: "error",
           title: "Error",
-          message: "Fetching offerTargets failed!",
+          message: error.message,
         })
       );
     }
