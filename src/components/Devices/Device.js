@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import styles from "./Device.module.css";
 import formStyles from "../Form.module.css";
 import useInput from "../../hooks/use-input";
+
 import { isValidSemVer } from "../../validation"
+
 import { useSelector } from 'react-redux';
 
 const Device = (props) => {
   const [editing, setEditing] = useState(false);
   const players = useSelector((state) => state.players.players);
-  const locales = useSelector((state) => state.players.players);
-  const operatingSystems = useSelector((state) => state.players.players);
-  
+  const locales = useSelector((state) => state.locales.locales);
+  const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
+
   const requiredFieldMsg = "Required.";
 
   const {
@@ -20,7 +22,7 @@ const Device = (props) => {
     valueChangeHandler: modelChangedHandler,
     blurHandler: modelBlurHandler,
     reset: resetModel,
-  } = useInput(val => true);
+  } = useInput(val => true, props.model);
 
   const {
     value: playerIdValue,
@@ -29,7 +31,7 @@ const Device = (props) => {
     valueChangeHandler: playerIdChangedHandler,
     blurHandler: playerIdBlurHandler,
     reset: resetPlayerId,
-  } = useInput(val => true);
+  } = useInput(val => true, props.playerId);
 
   const {
     value: operatingSystemIdValue,
@@ -38,7 +40,7 @@ const Device = (props) => {
     valueChangeHandler: operatingSystemIdChangedHandler,
     blurHandler: operatingSystemIdBlurHandler,
     reset: resetOperatingSystemId,
-  } = useInput(val => true);
+  } = useInput(val => true, props.operatingSystemId);
 
   const {
     value: localeIdValue,
@@ -47,7 +49,7 @@ const Device = (props) => {
     valueChangeHandler: localeIdChangedHandler,
     blurHandler: localeIdBlurHandler,
     reset: resetlocaleId,
-  } = useInput(val => true);
+  } = useInput(val => true, props.localeId);
 
   const {
     value: operatingSystemVersionValue,
@@ -56,7 +58,7 @@ const Device = (props) => {
     valueChangeHandler: operatingSystemVersionChangedHandler,
     blurHandler: operatingSystemVersionBlurHandler,
     reset: resetOperatingSystemVersion,
-  } = useInput(val => isValidSemVer);
+  } = useInput(val => isValidSemVer, props.operatingSystemVersion);
 
   const isFormValid = () => {
     return (
@@ -67,19 +69,31 @@ const Device = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    const deviceId = parseInt(event.target.dataset["deviceId"]);
+    // const deviceId = parseInt(event.target.dataset["deviceId"]);
 
     if (!isFormValid) {
       return;
     }
-    props.updateDevice({
+
+    const [
+      major_vers,
+      minor_vers,
+      patch_vers
+    ] = operatingSystemVersionValue.match(/^(\d+).(\d+).(\d+)$/).slice(1,4);
+
+    const device = {
       id: props.id,
+      os_major_version: major_vers,
+      os_minor_version: minor_vers,
+      os_patch_version: patch_vers,
       model: modelValue,
       player_id: playerIdValue,
       operating_system_id: operatingSystemIdValue,
-      operating_system_version: operatingSystemVersionValue,
       locale_id: localeIdValue,
-    });
+    };
+
+    props.updateDevice(device);
+      
     setEditing((prevEditState) => !prevEditState);
   };
 
@@ -193,23 +207,33 @@ const Device = (props) => {
 
   const playerName = (playerId) => {
     const p = players.find(player => player.id === playerId);
-    return `${p.first_name} ${p.last_name}`
+    return p ? `${p.first_name} ${p.last_name}` : "UNKOWN"
   }
 
-  // const osName = (osId) => {
-  //   // const os = operatingSystems.find( o => o.id === osId);
-  //   // return os.name;
-  // }
+  const osName = (osId) => {
+    const os = operatingSystems.find(os => os.id === osId);
+    return os ? os.name : "UNKOWN"
+  }
+
+  const localeCode = (localeId) => {
+    const locale = locales.find(l => l.id === localeId);
+    return locale ? locale['name'] : "UNKOWN"
+  }
 
   return (
     <li>
       <div className={styles.device}>
         <h2>
-          {modelValue} {operatingSystemIdValue}
+          <div className={styles.device__attribute}>{playerName(playerIdValue)}</div>
         </h2>
-        <div className={styles.device__attribute}>{operatingSystemVersionValue}</div>
+        <div className={styles.device__attribute}>
+          {modelValue}
+        </div>
+        <div className={styles.device__attribute}>
+          {operatingSystemVersionValue}
+        </div>
+        <div className={styles.device__attribute}>{osName(operatingSystemIdValue)}</div>
         <div className={styles.device__attribute}>{localeIdValue} </div>
-        <div className={styles.device__attribute}>{playerIdValue}</div>
         <button data-device-id={props.id} onClick={deleteDeviceHandler}>
           Delete
         </button>

@@ -3,15 +3,27 @@ import useInput from '../../hooks/use-input';
 import styles from '../Form.module.css';
 import { useSelector } from 'react-redux';
 
+const alphabeticalByName = (a, b) => {
+  if (a.last_name === b.last_name) {
+    return a.first_name > b.first_name ? 1 : -1;
+  }
+  return a.last_name > b.last_name ? 1 : -1;
+};
+
 function NewDevice(props) {
 
   const players = useSelector((state) => state.players.players);
   const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
   const locales = useSelector((state) => state.locales.locales);
+  const devices = useSelector((state) => state.devices.devices);
+
+  const deviceOwningPlayerIds = devices.map(d => d.player_id)
+  const devicelessPlayers = players.filter(p => !(deviceOwningPlayerIds.includes(p.id)))
 
   const isValidSemVer = (str) => {
     return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/.test(str);
   }
+
   const semVerErrorMsg = "Version format invalid."
   const requiredFieldMsg = "Required."
 
@@ -22,7 +34,7 @@ function NewDevice(props) {
     valueChangeHandler: modelChangedHandler,
     blurHandler: modelBlurHandler,
     reset: resetModel,
-  } = useInput((model) => model.trim().length > 0);
+  } = useInput( model => model.trim().length > 0);
 
   const {
     value: operatingSystemIdValue,
@@ -40,7 +52,7 @@ function NewDevice(props) {
     valueChangeHandler: playerIdChangedHandler,
     blurHandler: playerIdBlurHandler,
     reset: resetPlayerId
-  } = useInput( val => true);
+  } = useInput( val => val > 0);
 
   const {
     value: operatingSystemVersionValue,
@@ -67,8 +79,8 @@ function NewDevice(props) {
       model: modelValue,
       operating_system_id: operatingSystemIdValue,
       player_id: playerIdValue,
-      operating_system: operatingSystemIdValue,
-      localeId_cents: localeIdValue,
+      operating_system_version: operatingSystemVersionValue,
+      locale_id: localeIdValue,
     };
 
     props.onAddDevice(device);
@@ -99,8 +111,8 @@ function NewDevice(props) {
               onChange={playerIdChangedHandler}
               onBlur={playerIdBlurHandler}
             >
-              <option value="0">Select</option>
-              {players.map((player) => (
+              <option value="Select">Select</option>
+              {[...devicelessPlayers].sort(alphabeticalByName).map((player) => (
                 <option
                   key={player["id"]}
                   value={player["id"]}
@@ -124,10 +136,10 @@ function NewDevice(props) {
               <option value="0">Select</option>
               {operatingSystems.map((operatingSystem) => (
                 <option
-                  key={operatingSystem["id"]}
-                  value={operatingSystem["id"]}
+                  key={operatingSystem['id']}
+                  value={operatingSystem['id']}
                 >
-                  {operatingSystem["name"]}
+                  {operatingSystem['name']}
                 </option>
               ))}
             </select>
@@ -143,7 +155,10 @@ function NewDevice(props) {
             >
               <option value="0">Select</option>
               {locales.map((locale) => (
-                <option key={locale["id"]} value={locale["id"]}>
+                <option
+                  key={locale["id"]}
+                  value={locale["id"]}
+                >
                   {locale["code"]}
                 </option>
               ))}
@@ -152,7 +167,7 @@ function NewDevice(props) {
           </div>
 
           <div className={styles.form__control}>
-            <label>OS Version</label>
+            <label>OS Version (e.g. 1.0.0)</label>
             <input
               type="text"
               value={operatingSystemVersionValue}

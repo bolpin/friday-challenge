@@ -56,17 +56,5 @@ const OfferTarget = (props) => {
     </li>
   );
 };
-  // {id: 1, offerId: 1, minAge: 1, maxAge: 100, genderId: 1, …}
-  // deleteOfferTarget: ƒ deleteOfferTargetHandler(offerTarget)
-  // genderId: 1
-  // id: 1
-  // maxAge: 100
-  // minAge: 1
-  // minOsMajorVersion: 10
-  // minOsMinorVersion: 0
-  // minOsPatchVersion: 0
-  // offerId: 1
-  // operatingSystemId: 1
-  // updateOfferTarget: ƒ updateOfferTargetHandler(offerTarget)
   
 export default OfferTarget;

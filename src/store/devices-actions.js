@@ -70,6 +70,7 @@ export const updateDevice = (deviceData) => {
 export const createDevice = (deviceData) => {
   return async (dispatch) => {
     const fetchData = async () => {
+      debugger
       const response = await fetch(`${apiRoot}/devices.json`, {
         method: "POST",
         body: JSON.stringify({
@@ -89,6 +90,7 @@ export const createDevice = (deviceData) => {
 
     try {
       const newDevice = await fetchData();
+      debugger
       dispatch(devicesActions.addDevice(newDevice));
     } catch (error) {
       dispatch(

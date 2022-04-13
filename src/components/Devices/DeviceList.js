@@ -13,7 +13,9 @@ function DeviceList(props) {
           model={device.model}
           playerId={device.player_id}
           operatingSystemId={device.operating_system_id}
-          operatingSystemVersion={device.operating_system_version}
+          operatingSystemVersion={
+            `${device.os_major_version}.${device.os_minor_version}.${device.os_patch_version}`
+          }
           localeId={device.locale_id}
           deleteDevice={props.onDeleteDevice}
           updateDevice={props.onUpdateDevice}

@@ -1,11 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const alphabeticalByName = (a, b) => {
-  if (a.last_name === b.last_name) {
-    return a.first_name > b.first_name;
-  }
-  return a.last_name > b.last_name;
-};
 
 const playersSlice = createSlice({
   name: 'players',

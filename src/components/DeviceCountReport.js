@@ -100,7 +100,7 @@ const DeviceCountReport = () => {
           </div>
 
           <div className={styles.form__control}>
-            <label>Minimum OS version (e.g. 1.5.0)</label>
+            <label>Minimum OS version (e.g. 1.0.0)</label>
             <input
               type="text"
               value={minVersionValue}
@@ -113,7 +113,7 @@ const DeviceCountReport = () => {
           </div>
 
           <div className={styles.form__control}>
-            <label>Maximum OS version (e.g. 1.5.0)</label> 
+            <label>Maximum OS version (e.g. 1.0.0)</label> 
             <input
               type="text"
               value={maxVersionValue}

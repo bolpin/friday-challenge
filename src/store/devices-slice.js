@@ -12,13 +12,20 @@ const devicesSlice = createSlice({
     },
     addDevice(state, action) {
       state.changed = true;
-      const newDevice = action.payload;
+      debugger
+      const newDevice = 
+        {...action.payload,
+          os_major_version: action.payload.min_os_version,
+          os_minor_version: action.payload.min_os_version,
+          os_patch_version: action.payload.min_os_version,
+        };
       state.devices.unshift(newDevice);
     },
     updateDevice(state, action) {
       state.changed = true;
       const updatedDevice = action.payload;
       const existingDevice = state.devices.find((p) => p.id === updatedDevice.id);
+      debugger
       if (existingDevice) {
         existingDevice.gender.id = updatedDevice.gender.id
         existingDevice.gender.name = updatedDevice.gender.name

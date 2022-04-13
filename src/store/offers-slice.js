@@ -19,7 +19,6 @@ const offersSlice = createSlice({
       state.changed = true;
       const updatedOffer = action.payload;
       const existingOffer = state.offers.find((p) => p.id === updatedOffer.id);
-      debugger
       if (existingOffer) {
         existingOffer.description = updatedOffer.description
         existingOffer.header = updatedOffer.header
