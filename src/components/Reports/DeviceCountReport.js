@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import styles from './Form.module.css';
-import useHttp from '../hooks/use-http';
-import useInput from '../hooks/use-input';
+import styles from '../Form.module.css';
+import useHttp from '../../hooks/use-http';
+import useInput from '../../hooks/use-input';
 
 const DeviceCountReport = () => {
 

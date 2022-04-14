@@ -5,7 +5,7 @@ import Players from "./components/Players/Players";
 import Offers from "./components/Offers/Offers";
 import Devices from "./components/Devices/Devices";
 import OfferTargets from "./components/OfferTargets/OfferTargets";
-import Report from "./components/Report";
+import Report from "./components/Reports/Report";
 import { useSelector, useDispatch } from "react-redux";
 import Notification from './components/UI/Notification';
 
