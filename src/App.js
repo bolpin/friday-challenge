@@ -5,43 +5,44 @@ import Players from "./components/Players/Players";
 import Offers from "./components/Offers/Offers";
 import Devices from "./components/Devices/Devices";
 import OfferTargets from "./components/OfferTargets/OfferTargets";
-import Report from "./components/Reports/Report";
-import { useSelector, useDispatch } from "react-redux";
+import Reports from "./components/Reports/Reports";
 import Notification from './components/UI/Notification';
-
-import { fetchDevices } from './store/devices-actions';
-import { fetchOffers } from './store/offers-actions';
-import { fetchPlayers } from './store/players-actions';
 import { fetchLocales } from './store/locales-actions';
-import { fetchOperatingSystems } from './store/operating-systems-actions';
+import { fetchDevices } from './store/devices-actions';
+import { fetchPlayers } from './store/players-actions';
 import { fetchGenders } from './store/genders-actions';
-import { fetchOfferTargets } from './store/offer-targets-actions';
+import { fetchOperatingSystems } from './store/operating-systems-actions';
+import { useDispatch, useSelector } from 'react-redux';
+
+let isInitialLoad = true;
+
 
 function App() {
 
   const dispatch = useDispatch();
-
   const notification = useSelector((state) => state.ui.notification);
 
   useEffect(() => {
-    // load up the db data into state slices:
-    dispatch(fetchOffers());
-    dispatch(fetchPlayers());
     dispatch(fetchDevices());
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchPlayers());
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchGenders());
     dispatch(fetchLocales());
     dispatch(fetchOperatingSystems());
-    dispatch(fetchOfferTargets());
-    dispatch(fetchGenders());
-  }, [dispatch]);
+  }, []);
 
-  const isInitial = true;
 
   return (
     <>
       <nav>
         <a href="/reports">Reports</a>
         <a href="/offers">Offers</a>
-        <a href="/offer-targets">Offer Targets & Players Matching</a>
+        <a href="/offer-targets">Offer Targets</a>
         <a href="/players">Players</a>
         <a href="/devices">Devices</a>
       </nav>
@@ -55,10 +56,10 @@ function App() {
       <Router>
         <Switch>
           <Route exact path="/">
-            <Report />
+            <Reports />
           </Route>
           <Route path="/reports">
-            <Report />
+            <Reports />
           </Route>
           <Route path="/players">
             <Players />

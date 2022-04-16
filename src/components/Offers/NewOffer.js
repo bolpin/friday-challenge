@@ -64,6 +64,15 @@ function NewOffer(props) {
 
     props.onAddOffer(offer);
   }
+  let formIsValid = false;
+
+  if (titleIsValid &&
+    headerIsValid &&
+    descriptionIsValid &&
+    pointsIsValid &&
+    payoutIsValid) {
+      formIsValid = true;
+    }
 
   return (
     <div className={styles.form}>
@@ -139,7 +148,10 @@ function NewOffer(props) {
         </div>
 
         <div className={styles.form__actions}>
-          <button type='submit'>
+          <button
+            type='submit'
+            disabled={!formIsValid}
+          >
             Add Offer
           </button>
         </div>

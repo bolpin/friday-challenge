@@ -3,6 +3,10 @@ import styles from '../Form.module.css';
 import useHttp from '../../hooks/use-http';
 import useInput from '../../hooks/use-input';
 
+import { isValidSemVer } from "../../validation";
+import { apiRoot } from '../../config';
+
+
 const DeviceCountReport = () => {
 
   const [os, setOs] = useState('android');
@@ -10,11 +14,17 @@ const DeviceCountReport = () => {
 
   const { isLoading, httpError, sendRequest: fetchDeviceCount } = useHttp();
 
-  // from https://semver.org/
-  const isValidSemVer = (str) => {
-    return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/.test(str);
-  }
   const semVerErrMsg = "Version format invalid."
+  const requiredErrMsg = "Required."
+
+  const {
+    value: osValue,
+    isValid: osIsValid,
+    hasError: osHasError,
+    valueChangeHandler: osChangedHandler,
+    blurHandler: osBlurHandler,
+    reset: resetOS,
+  } = useInput(val => val !== '');
 
   const {
     value: minVersionValue,
@@ -35,10 +45,6 @@ const DeviceCountReport = () => {
   } = useInput(isValidSemVer);
 
 
-  const requestOptions = {
-    url: `http://localhost:3000/device_count.json?os=${os}&min_vers=${minVersionValue}&max_vers=${maxVersionValue}`,
-  };
-  
   const processDeviceCountResult = (deviceCountResult) => {
     setDeviceCount(+deviceCountResult[0].count);
   }
@@ -49,21 +55,22 @@ const DeviceCountReport = () => {
 
   let formIsValid = false;
 
-  if (minVersionIsValid && maxVersionIsValid) {
+  if (osIsValid && minVersionIsValid && maxVersionIsValid) {
     formIsValid = true;
   }
 
+  const requestOptions = {
+    url: `${apiRoot}/device_count.json?os=${os}&min_vers=${minVersionValue}&max_vers=${maxVersionValue}`,
+  };
+
   const submitHandler = (event) => {
     event.preventDefault();
-
-    if (!formIsValid) { return; }
-
+    if (!formIsValid) {
+      return;
+    }
     fetchDeviceCount(requestOptions, processDeviceCountResult);
   };
 
-  const osChangedHandler = (event) => {
-    setOs(event.target.value);
-  }
 
   let resultContent = <p>No devices found.</p>
 
@@ -93,11 +100,20 @@ const DeviceCountReport = () => {
         <div className={styles.form__controls}>
           <div className={styles.form__control}>
             <label>OS</label>
-            <select type="select" value={os} onChange={osChangedHandler}>
+            <select
+              type="select"
+              value={osValue}
+              onChange={osChangedHandler}
+              onBlur={osBlurHandler}
+            >
+              <option value="">Select</option>
               <option value="android">Android</option>
               <option value="ios">iOS</option>
             </select>
-          </div>
+            { osHasError && <div className={styles.error}>
+                {requiredErrMsg}
+              </div>}
+            </div>
 
           <div className={styles.form__control}>
             <label>Minimum OS version (e.g. 1.0.0)</label>

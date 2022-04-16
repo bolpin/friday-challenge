@@ -5,7 +5,7 @@ import { apiRoot } from "../config";
 export const deleteOfferTarget = (offerTargetId) => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await fetch(`${apiRoot}/offerTargets/${offerTargetId}.json`, {
+      const response = await fetch(`${apiRoot}/offer_targets/${offerTargetId}.json`, {
         method: "DELETE",
       });
 
@@ -37,7 +37,7 @@ export const updateOfferTarget = (offerTargetData) => {
       const response = await fetch(`${apiRoot}/offer_targets/${id}.json`, {
         method: "PATCH",
         body: JSON.stringify({
-          offerTarget: offerTargetData,
+          offer_target: offerTargetData,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +73,7 @@ export const createOfferTarget = (offerTargetData) => {
       const response = await fetch(`${apiRoot}/offer_targets.json`, {
         method: "POST",
         body: JSON.stringify({
-          offerTarget: offerTargetData,
+          offer_target: offerTargetData,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -121,6 +121,39 @@ export const fetchOfferTargets = () => {
       dispatch(
         offerTargetsActions.replaceOfferTargets({
           offerTargets: offerTargetsData || [],
+        })
+      );
+    } catch (error) {
+      dispatch(
+        uiActions.showNotification({
+          status: "error",
+          title: "Error",
+          message: error.message,
+        })
+      );
+    }
+  };
+};
+
+export const fetchMatchingPlayers = (offerTargetId) => {
+  return async (dispatch) => {
+    const fetchData = async () => {
+      const response = await fetch(`${apiRoot}/offer_target_players/index/${offerTargetId}.json`);
+
+      if (!response.ok) {
+        throw new Error(`Could not fetch matching players. (${response.status} ${response.statusText})`);
+      }
+
+      const data = await response.json();
+
+      return data;
+    };
+
+    try {
+      const matchingPlayersData = await fetchData();
+      dispatch(
+        offerTargetsActions.replaceMatchingPlayers({
+          matchingPlayers: matchingPlayersData || [],
         })
       );
     } catch (error) {

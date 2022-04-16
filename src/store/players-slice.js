@@ -1,5 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const alphabeticalByName = (a, b) => {
+  if (a.last_name === b.last_name) {
+    return a.first_name > b.first_name ? 1 : -1;
+  }
+  return a.last_name > b.last_name ? 1 : -1;
+};
 
 const playersSlice = createSlice({
   name: 'players',
@@ -9,7 +15,7 @@ const playersSlice = createSlice({
   },
   reducers: {
     replacePlayers(state, action) {
-      state.players = action.payload.players //.sort(alphabeticalByName);
+      state.players = action.payload.players.sort(alphabeticalByName);
     },
     addPlayer(state, action) {
       state.changed = true;
@@ -36,6 +42,8 @@ const playersSlice = createSlice({
   },
 });
 
+// this is the actual redux-toolkit-generated "action-creator"
+// it provides the reducers we need to update the state.
 export const playersActions = playersSlice.actions;
 
 export default playersSlice;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import styles from "./OfferTarget.module.css";
 import formStyles from "../Form.module.css";
@@ -12,8 +12,9 @@ const OfferTarget = (props) => {
   const [editing, setEditing] = useState(false);
 
   const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
-  const genders = useSelector((state) => state.genders.genders);
   const locales = useSelector((state) => state.locales.locales);
+  const offers = useSelector((state) => state.offers.offers);
+  const genders = useSelector((state) => state.genders.genders);
 
   const requiredFieldMsg = "Required.";
 
@@ -27,13 +28,23 @@ const OfferTarget = (props) => {
   }
 
   const genderName = (id) => {
-    const g = genders.find(gender => gender.id === id);
-    return g ? g.name : "UNKOWN"
+    const gender = genders.find(g => g.id == id);
+    return gender ? gender.name : "UNKNOWN"
   }
 
   const osName = (osId) => {
-    const os = operatingSystems.find(os => os.id === osId);
-    return os ? os.name : "UNKOWN"
+    const os = operatingSystems.find(os => os.id == osId);
+    return os ? os.name : "UNKNOWN"
+  }
+
+  const localeCode = (id) => {
+    const locale = locales.find(l => l.id == id);
+    return locale ? locale.code : "UNKNOWN"
+  }
+
+  const offerTitle = (id) => {
+    const offer = offers.find(o => o.id === id);
+    return offer ? offer.title : "UNKNOWN"
   }
 
   const {
@@ -99,6 +110,7 @@ const OfferTarget = (props) => {
     reset: resetLocaleId,
   } = useInput((localeId) => localeId > 0, props.localeId);
 
+
   const isFormValid = () => {
     return (
       offerIdIsValid &&
@@ -118,17 +130,25 @@ const OfferTarget = (props) => {
       return;
     }
 
+    const [major_vers,
+      minor_vers,
+      patch_vers] = minOsVersionValue.match(/^(\d+).(\d+).(\d+)$/).slice(1,4);
+
     const offerTarget = {
       id: props.id,
-      min_age: minAgeValue,
-      max_age: maxAgeValue,
+      offer_id: offerIdValue,
+      min_player_age: minAgeValue,
+      max_player_age: maxAgeValue,
       gender_id: genderIdValue,
       operating_system_id: operatingSystemIdValue,
-      min_os_vers: minOsVersionValue,
+      min_os_major_version: major_vers,
+      min_os_minor_version: minor_vers,
+      min_os_patch_version: patch_vers,
       locale_id: localeIdValue,
     };
 
-    props.submitAction(offerTarget);
+    props.updateOfferTarget(offerTarget);
+    toggleEditingState();
   }
 
   if (editing) {
@@ -137,26 +157,21 @@ const OfferTarget = (props) => {
         <div className={styles.offerTarget}>
           <form onSubmit={submitHandler}>
             <div className={formStyles.form__controls}>
+
               <div className={formStyles.form__control}>
-                <input
-                  type="number"
-                  value={minAgeValue}
-                  onChange={minAgeChangedHandler}
-                />
-              </div>
-              <div className={formStyles.form__control}>
-                <input
-                  type="number"
-                  value={maxAgeValue}
-                  onChange={maxAgeChangedHandler}
-                />
-              </div>
-              <div className={formStyles.form__control}>
-                <input
-                  type="text"
-                  value={minOsVersionValue}
-                  onChange={minOsVersionChangedHandler}
-                />
+                <select
+                  value={offerIdValue}
+                  onChange={offerIdChangedHandler}
+                  onBlur={offerIdBlurHandler}
+                >
+                  <option value="0">Select</option>
+                  {offers.map((offer) => (
+                    <option key={offer["id"]} value={offer["id"]}>
+                      {offer["title"]}
+                    </option>
+                  ))}
+                </select>
+                {offerIdHasError && { requiredFieldMsg }}
               </div>
 
               <div className={formStyles.form__control}>
@@ -176,6 +191,21 @@ const OfferTarget = (props) => {
               </div>
 
               <div className={formStyles.form__control}>
+                <input
+                  type="number"
+                  value={minAgeValue}
+                  onChange={minAgeChangedHandler}
+                />
+              </div>
+              <div className={formStyles.form__control}>
+                <input
+                  type="number"
+                  value={maxAgeValue}
+                  onChange={maxAgeChangedHandler}
+                />
+              </div>
+
+              <div className={formStyles.form__control}>
                 <select
                   value={operatingSystemIdValue}
                   onChange={operatingSystemIdChangedHandler}
@@ -192,6 +222,14 @@ const OfferTarget = (props) => {
                   ))}
                 </select>
                 {operatingSystemIdHasError && { requiredFieldMsg }}
+              </div>
+
+              <div className={formStyles.form__control}>
+                <input
+                  type="text"
+                  value={minOsVersionValue}
+                  onChange={minOsVersionChangedHandler}
+                />
               </div>
 
               <div className={formStyles.form__control}>
@@ -225,11 +263,23 @@ const OfferTarget = (props) => {
     <li>
       <div className={styles.offerTarget}>
         <h2>
-         Offer: {props.offerId}   age:{props.minAge}-{props.maxAge}
+         {offerTitle(props.offerId)}
         </h2>
-        <div className={styles.offer__attribute}>{osName(props.operatingSystemId)}</div>
-        <div className={styles.offer__attribute}>Min OS version: {props.minOsMajorVersion}.{props.minOsMinorVersion}.{props.minOsPatchVersion}</div>
-        <div className={styles.offer__attribute}>{genderName(props.genderId).code}</div>
+        <div className={styles.offerTarget__attribute}>
+          {genderName(props.genderId)}
+        </div>
+        <div className={styles.offerTarget__attribute}>
+          {props.minAge}-{props.maxAge}
+        </div>
+        <div className={styles.offerTarget__attribute}>
+          {osName(props.operatingSystemId)}
+        </div>
+        <div className={styles.offerTarget__attribute}>
+          >= {props.minOsMajorVersion}.{props.minOsMinorVersion}.{props.minOsPatchVersion}
+        </div>
+        <div className={styles.offerTarget__attribute}>
+          {localeCode(props.localeId)}
+        </div>
         <button data-offer-id={props.id} onClick={deleteOfferTargetHandler}>
           Delete
         </button>

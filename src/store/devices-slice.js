@@ -14,9 +14,9 @@ const devicesSlice = createSlice({
       state.changed = true;
       const newDevice =
         {...action.payload,
-          os_major_version: action.payload.min_os_version,
-          os_minor_version: action.payload.min_os_version,
-          os_patch_version: action.payload.min_os_version,
+          os_major_version: action.payload.os_major_version,
+          os_minor_version: action.payload.os_minor_version,
+          os_patch_version: action.payload.os_patch_version,
         };
       state.devices.unshift(newDevice);
     },

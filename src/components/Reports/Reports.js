@@ -1,18 +1,20 @@
 import React from "react";
 import TotalPayoutReport from "./TotalPayoutReport"
 import DeviceCountReport from "./DeviceCountReport"
-import styles from './Report.module.css'
+import MatchingPlayersReport from "./MatchingPlayersReport"
+import styles from './Reports.module.css'
 
-const Report = () => {
+const Reports = () => {
 
   return (
     <>
       <div className={styles.reports}>
         <TotalPayoutReport />
         <DeviceCountReport />
+        <MatchingPlayersReport />
       </div>
     </>
   );
 };
 
-export default Report;
+export default Reports;

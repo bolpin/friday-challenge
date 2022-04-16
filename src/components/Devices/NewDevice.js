@@ -1,28 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import useInput from '../../hooks/use-input';
 import styles from '../Form.module.css';
-import { useSelector } from 'react-redux';
+import {isValidSemVer } from '../../validation'
+import { fetchPlayers } from '../../store/players-actions';
+import { fetchOperatingSystems } from '../../store/operating-systems-actions';
+import { fetchLocales } from '../../store/locales-actions';
+import { fetchDevices } from '../../store/devices-actions';
 
-const alphabeticalByName = (a, b) => {
-  if (a.last_name === b.last_name) {
-    return a.first_name > b.first_name ? 1 : -1;
-  }
-  return a.last_name > b.last_name ? 1 : -1;
-};
+import { useDispatch, useSelector } from 'react-redux';
 
 function NewDevice(props) {
 
+  const dispatch = useDispatch();
   const players = useSelector((state) => state.players.players);
   const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
   const locales = useSelector((state) => state.locales.locales);
   const devices = useSelector((state) => state.devices.devices);
 
+  useEffect(() => {
+    if (players.changed) {
+      dispatch(fetchPlayers());
+    }
+  }, [players]);
+
+  useEffect(() => {
+    if (devices.changed) {
+      dispatch(fetchDevices());
+    }
+  }, [dispatch, devices]);
+
+  useEffect(() => {
+    if (locales.changed) {
+      dispatch(fetchLocales());
+    }
+  }, [locales]);
+
+  useEffect(() => {
+    if (operatingSystems.changed) {
+      dispatch(fetchOperatingSystems());
+    }
+  }, [operatingSystems]);
+
   const deviceOwningPlayerIds = devices.map(d => d.player_id)
   const devicelessPlayers = players.filter(p => !(deviceOwningPlayerIds.includes(p.id)))
-
-  const isValidSemVer = (str) => {
-    return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/.test(str);
-  }
 
   const semVerErrorMsg = "Version format invalid."
   const requiredFieldMsg = "Required."
@@ -43,7 +63,7 @@ function NewDevice(props) {
     valueChangeHandler: operatingSystemIdChangedHandler,
     blurHandler: operatingSystemIdBlurHandler,
     reset: resetOperatingSystemId,
-  } = useInput( val => true);
+  } = useInput( val => val > 0);
 
   const {
     value: playerIdValue,
@@ -70,7 +90,16 @@ function NewDevice(props) {
     valueChangeHandler: localeIdChangedHandler,
     blurHandler: localeIdBlurHandler,
     reset: resetLocaleId,
-  } = useInput( val => true);
+  } = useInput( val => val > 0);
+
+  let formIsValid = false;
+  if (modelIsValid &&
+    operatingSystemIdIsValid &&
+    playerIdIsValid &&
+    operatingSystemVersionIsValid &&
+    localeIdIsValid) {
+      formIsValid = true;
+    }
 
   function submitHandler(event) {
     event.preventDefault();
@@ -112,7 +141,7 @@ function NewDevice(props) {
               onBlur={playerIdBlurHandler}
             >
               <option value="Select">Select</option>
-              {[...devicelessPlayers].sort(alphabeticalByName).map((player) => (
+              {devicelessPlayers.map((player) => (
                 <option
                   key={player["id"]}
                   value={player["id"]}
@@ -143,7 +172,9 @@ function NewDevice(props) {
                 </option>
               ))}
             </select>
-            {operatingSystemIdHasError && { requiredFieldMsg }}
+            {operatingSystemIdHasError && <div className={styles.error}> 
+              { requiredFieldMsg }
+            </div>}
           </div>
 
           <div className={styles.form__control}>
@@ -163,7 +194,9 @@ function NewDevice(props) {
                 </option>
               ))}
             </select>
-            {localeIdHasError && { requiredFieldMsg }}
+            {localeIdHasError && <div className={styles.error}> 
+              { requiredFieldMsg }
+            </div>}
           </div>
 
           <div className={styles.form__control}>
@@ -182,7 +215,10 @@ function NewDevice(props) {
         </div>
 
         <div className={styles.form__actions}>
-          <button type='submit'>
+          <button
+            type='submit'
+            disabled={!formIsValid}
+          >
             Add Device
           </button>
         </div>

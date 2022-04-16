@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import OfferList from "./OfferList";
 import styles from './Offers.module.css';
@@ -6,12 +6,26 @@ import NewOffer from "./NewOffer";
 
 import { deleteOffer, createOffer, updateOffer } from '../../store/offers-actions';
 import { useDispatch, useSelector } from 'react-redux';
+import { fetchOffers } from '../../store/offers-actions';
+
 
 const Offers = (props) => {
 
   const dispatch = useDispatch();
 
   const offers = useSelector((state) => state.offers.offers);
+
+
+  useEffect(() => {
+    // load up the db data into state slices:
+    dispatch(fetchOffers());
+    // dispatch(fetchPlayers());
+    // dispatch(fetchDevices());
+    // dispatch(fetchLocales());
+    // dispatch(fetchOperatingSystems());
+    // dispatch(fetchOfferTargets());
+    // dispatch(fetchGenders());
+  }, [dispatch]);
 
   function addOfferHandler(offer) {
     dispatch(createOffer(offer));

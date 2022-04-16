@@ -70,9 +70,17 @@ function NewPlayer(props) {
       gender_id: genderIdValue,
     };
 
-    props.onAddPlayer(player);
+    props.onCreatePlayer(player);
     resetForm();
   }
+  let formIsValid = false;
+
+  if (firstNameIsValid &&
+    lastNameIsValid &&
+    genderIdIsValid &&
+    birthdateIsValid) {
+      formIsValid = true;
+    }
 
   return (
     <div className={styles.form}>
@@ -137,7 +145,10 @@ function NewPlayer(props) {
         </div>
 
         <div className={styles.form__actions}>
-          <button type='submit'>
+          <button
+            type='submit'
+            disabled={!formIsValid}
+          >
             Add Player
           </button>
         </div>

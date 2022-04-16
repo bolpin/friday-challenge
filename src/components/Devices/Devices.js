@@ -7,8 +7,8 @@ import NewDevice from "./NewDevice";
 import { deleteDevice, createDevice, updateDevice } from '../../store/devices-actions';
 import { useDispatch, useSelector } from 'react-redux';
 
-const Devices = (props) => {
 
+const Devices = (props) => {
 
   const dispatch = useDispatch();
   const devices = useSelector((state) => state.devices.devices);

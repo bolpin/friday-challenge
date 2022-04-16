@@ -2,19 +2,18 @@ import React, { useState, useEffect } from "react";
 import styles from "../Form.module.css";
 import useInput from "../../hooks/use-input";
 import { useSelector } from 'react-redux';
+import { isValidSemVer } from '../../validation';
 
 const NewOfferTarget = (props) => {
 
   const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
   const genders = useSelector((state) => state.genders.genders);
   const locales = useSelector((state) => state.locales.locales);
+  const offers = useSelector((state) => state.offers.offers);
 
-  const requiredFieldMsg = "Required.";
+  const requiredErrMsg = "Required.";
   const semVerErrMsg = "Version format invalid."
 
-  const isValidSemVer = (str) => {
-    return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/.test(str);
-  }
   const {
     value: offerIdValue,
     isValid: offerIdIsValid,
@@ -22,7 +21,7 @@ const NewOfferTarget = (props) => {
     valueChangeHandler: offerIdChangedHandler,
     blurHandler: offerIdBlurHandler,
     reset: resetOfferId,
-  } = useInput(val => true, props.offerId);
+  } = useInput(val => val > 0);
 
   const {
     value: minAgeValue,
@@ -31,7 +30,7 @@ const NewOfferTarget = (props) => {
     valueChangeHandler: minAgeChangedHandler,
     blurHandler: minAgeBlurHandler,
     reset: resetMinAge,
-  } = useInput(age => age > 0, props.minAge);
+  } = useInput(age => age > 13, 14);
 
   const {
     value: maxAgeValue,
@@ -40,7 +39,7 @@ const NewOfferTarget = (props) => {
     valueChangeHandler: maxAgeChangedHandler,
     blurHandler: maxAgeBlurHandler,
     reset: resetMaxAge,
-  } = useInput(age => age > 0, props.maxAge);
+  } = useInput(age => age > 13, 99);
 
   const {
     value: genderIdValue,
@@ -49,7 +48,7 @@ const NewOfferTarget = (props) => {
     valueChangeHandler: genderIdChangedHandler,
     blurHandler: genderIdBlurHandler,
     reset: resetGenderId,
-  } = useInput(genderId => genderId > 0 && genderId < 4, props.genderId);
+  } = useInput(genderId => genderId > 0 && genderId < 4);
 
   const {
     value: operatingSystemIdValue,
@@ -58,7 +57,7 @@ const NewOfferTarget = (props) => {
     valueChangeHandler: operatingSystemIdChangedHandler,
     blurHandler: operatingSystemIdBlurHandler,
     reset: resetOperatingSystemId,
-  } = useInput(val => true, props.operatingSystemId);
+  } = useInput(val => val !== '');
 
   const {
     value: minOsVersionValue,
@@ -67,7 +66,7 @@ const NewOfferTarget = (props) => {
     valueChangeHandler: minOsVersionChangedHandler,
     blurHandler: minOsVersionBlurHandler,
     reset: resetMinOsVersion,
-  } = useInput(isValidSemVer, props.minOsVersion);
+  } = useInput(isValidSemVer);
 
   const {
     value: localeIdValue,
@@ -76,64 +75,103 @@ const NewOfferTarget = (props) => {
     valueChangeHandler: localeIdChangedHandler,
     blurHandler: localeIdBlurHandler,
     reset: resetLocaleId,
-  } = useInput((localeId) => localeId > 0, props.localeId);
+  } = useInput(val => val > 0);
 
-  const isFormValid = () => {
-    return (
-      offerIdIsValid &&
-      minAgeIsValid &&
-      maxAgeIsValid &&
-      genderIdIsValid &&
-      minOsVersionIsValid &&
-      operatingSystemIdIsValid &&
-      localeIdIsValid
-    );
-  };
+  let formIsValid = false;
+  if (
+    offerIdIsValid &&
+    minAgeIsValid &&
+    maxAgeIsValid &&
+    genderIdIsValid &&
+    minOsVersionIsValid &&
+    operatingSystemIdIsValid &&
+    localeIdIsValid) {
+    formIsValid = true;
+  }
 
   function submitHandler(event) {
     event.preventDefault();
 
-    if (!isFormValid) {
+    if (!formIsValid) {
       return;
     }
 
+    const [major_vers,
+      minor_vers,
+      patch_vers] = minOsVersionValue.match(/^(\d+).(\d+).(\d+)$/).slice(1,4);
+
     const offerTarget = {
-      id: props.id,
-      min_age: minAgeValue,
-      max_age: maxAgeValue,
+      offer_id: offerIdValue,
+      min_player_age: minAgeValue,
+      max_player_age: maxAgeValue,
       gender_id: genderIdValue,
       operating_system_id: operatingSystemIdValue,
-      min_os_vers: minOsVersionValue,
+      min_os_major_version: major_vers,
+      min_os_minor_version: minor_vers,
+      min_os_patch_version: patch_vers,
       locale_id: localeIdValue,
     };
 
-    props.submitAction(offerTarget);
+    props.onCreateOfferTarget(offerTarget);
   }
 
   return (
     <div className={styles.form}>
-      <form onSubmit={props.onCreateOfferTarget}>
+      <form onSubmit={submitHandler}>
         <div className={styles.form__controls}>
-          <h1>Offer Id ???</h1>
+
+          <div className={styles.form__control}>
+            <label>Offer</label>
+            <select
+              value={offerIdValue}
+              onChange={offerIdChangedHandler}
+              onBlur={offerIdBlurHandler}
+            >
+              <option value="0">Select</option>
+              {offers.map((offer) => (
+                <option key={offer["id"]} value={offer["id"]}>
+                  {offer["title"]}
+                </option>
+              ))}
+            </select>
+            {offerIdHasError && 
+            <div className={styles.error}>
+            {requiredErrMsg}
+            </div>}
+          </div>
+
           <div className={styles.form__control}>
             <label>Minimum Age</label>
             <input
               type="number"
               value={minAgeValue}
+              min='0'
+              max='120'
               onChange={minAgeChangedHandler}
+              onBlur={minAgeBlurHandler}
             />
-            {minAgeHasError && { requiredFieldMsg }}
+            {minAgeHasError && 
+            <div className={styles.error}>
+            {requiredErrMsg}
+            </div>}
           </div>
 
           <div className={styles.form__control}>
             <label>Maximum Age</label>
             <input
               type="number"
+              min='0'
+              max='120'
               value={maxAgeValue}
               onChange={maxAgeChangedHandler}
+              onBlur={maxAgeBlurHandler}
             />
-            {maxAgeHasError && { requiredFieldMsg }}
+            {maxAgeHasError && 
+            <div className={styles.error}>
+            {requiredErrMsg}
+            </div>}
           </div>
+
 
           <div className={styles.form__control}>
             <label>Min. OS Version</label>
@@ -141,8 +179,12 @@ const NewOfferTarget = (props) => {
               type="text"
               value={minOsVersionValue}
               onChange={minOsVersionChangedHandler}
+              onBlur={minOsVersionBlurHandler}
             />
-            {minOsVersionHasError && { semVerErrMsg }}
+            {minOsVersionHasError && 
+            <div className={styles.error}>
+            {semVerErrMsg}
+            </div>}
           </div>
 
           <div className={styles.form__control}>
@@ -159,7 +201,10 @@ const NewOfferTarget = (props) => {
                 </option>
               ))}
             </select>
-            {genderIdHasError && { requiredFieldMsg }}
+            {genderIdHasError && 
+            <div className={styles.error}>
+            {requiredErrMsg}
+            </div>}
           </div>
 
           <div className={styles.form__control}>
@@ -169,7 +214,7 @@ const NewOfferTarget = (props) => {
               onChange={operatingSystemIdChangedHandler}
               onBlur={operatingSystemIdBlurHandler}
             >
-              <option value="0">Select</option>
+              <option value="">Select</option>
               {operatingSystems.map((operatingSystem) => (
                 <option
                   key={operatingSystem["id"]}
@@ -179,7 +224,10 @@ const NewOfferTarget = (props) => {
                 </option>
               ))}
             </select>
-            {operatingSystemIdHasError && { requiredFieldMsg }}
+            {operatingSystemIdHasError && 
+            <div className={styles.error}>
+            {requiredErrMsg}
+            </div>}
           </div>
 
           <div className={styles.form__control}>
@@ -196,16 +244,24 @@ const NewOfferTarget = (props) => {
                 </option>
               ))}
             </select>
-            {localeIdHasError && { requiredFieldMsg }}
-          </div>
-
-          <div className={styles.form__actions}>
-            <button type="submit">Create Offer Target</button>
+            {localeIdHasError && 
+            <div className={styles.error}>
+            {requiredErrMsg}
+            </div>}
           </div>
         </div>
-      </form>
-    </div>
-  )
-};
+
+        <div className={styles.form__actions}>
+        <button
+          type='submit'
+          disabled={!formIsValid}
+        >
+          Add Offer Target
+        </button>
+      </div>
+    </form>
+  </div>
+  );
+}
 
 export default NewOfferTarget;

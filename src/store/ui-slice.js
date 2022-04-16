@@ -4,6 +4,9 @@ const uiSlice = createSlice({
   name: 'ui',
   initialState: { notification: null },
   reducers: {
+    hideNotification(state, action) {
+      state.notification = null;
+    }, 
     showNotification(state, action) {
       state.notification = {
         status: action.payload.status,

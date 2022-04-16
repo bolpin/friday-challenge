@@ -14,6 +14,7 @@ function OfferTargetList(props) {
           minAge={offerTarget.min_player_age}
           maxAge={offerTarget.max_player_age}
           genderId={offerTarget.gender_id}
+          localeId={offerTarget.locale_id}
           operatingSystemId={offerTarget.operating_system_id}
           minOsMajorVersion={offerTarget.min_os_major_version}
           minOsMinorVersion={offerTarget.min_os_minor_version}

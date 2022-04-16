@@ -58,7 +58,7 @@ const Device = (props) => {
     valueChangeHandler: operatingSystemVersionChangedHandler,
     blurHandler: operatingSystemVersionBlurHandler,
     reset: resetOperatingSystemVersion,
-  } = useInput(val => isValidSemVer, props.operatingSystemVersion);
+  } = useInput(val => isValidSemVer(val), props.operatingSystemVersion);
 
   const isFormValid = () => {
     return (
@@ -144,6 +144,7 @@ const Device = (props) => {
                 {requiredFieldMsg}
               </div>}
             </div>
+
             <div className={formStyles.form__control}>
               <label>Operating System</label>
               <select
@@ -178,9 +179,10 @@ const Device = (props) => {
                   </option>
                 ))}
               </select>
-              {localeIdHasError && { requiredFieldMsg }}
+              {localeIdHasError && <div className={styles.error}>
+                {requiredFieldMsg}
+              </div>}
             </div>
-
 
             <div className={styles.form__control}>
               <label>OS Version</label>
@@ -195,10 +197,10 @@ const Device = (props) => {
               </div>}
             </div>
 
-            <div className={styles.form__actions}>
-              <button onClick={cancelEditHandler}>Cancel</button>
-              <button type="submit">Save</button>
-            </div>
+          </div>
+          <div className={styles.form__actions}>
+            <button onClick={cancelEditHandler}>Cancel</button>
+            <button type="submit">Save</button>
           </div>
         </form>
       </div>
@@ -207,17 +209,17 @@ const Device = (props) => {
 
   const playerName = (playerId) => {
     const p = players.find(player => player.id === playerId);
-    return p ? `${p.first_name} ${p.last_name}` : "UNKOWN"
+    return p ? `${p.first_name} ${p.last_name}` : "UNKNOWN"
   }
 
   const osName = (osId) => {
     const os = operatingSystems.find(os => os.id === osId);
-    return os ? os.name : "UNKOWN"
+    return os ? os.name : "UNKNOWN"
   }
 
   const localeCode = (localeId) => {
     const locale = locales.find(l => l.id === localeId);
-    return locale ? locale['name'] : "UNKOWN"
+    return locale ? locale.code : "UNKNOWN"
   }
 
   return (
@@ -233,7 +235,7 @@ const Device = (props) => {
           {operatingSystemVersionValue}
         </div>
         <div className={styles.device__attribute}>{osName(operatingSystemIdValue)}</div>
-        <div className={styles.device__attribute}>{localeIdValue} </div>
+        <div className={styles.device__attribute}>{localeCode(localeIdValue)} </div>
         <button data-device-id={props.id} onClick={deleteDeviceHandler}>
           Delete
         </button>
