@@ -1,19 +1,35 @@
 import React from 'react';
 import './index.css';
 import App from './App';
+import Players from "./components/Players/Players";
+import Offers from "./components/Offers/Offers";
+import Devices from "./components/Devices/Devices";
+import OfferTargets from "./components/OfferTargets/OfferTargets";
+import Reports from "./components/Reports/Reports";
 import reportWebVitals from './reportWebVitals';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Route, Routes, } from "react-router-dom";
+
 import { Provider } from 'react-redux';
 import store from './store/index';
 
-import * as ReactDOMClient from 'react-dom/client';
-
-const container = document.getElementById('root');
-const root = ReactDOMClient.createRoot(container);
+const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
+    <Provider store={store} >
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} >
+            <Route path="/" element={<Reports />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/players" element={<Players />} />
+            <Route path="/devices" element={<Devices />} />
+            <Route path="/offers" element={<Offers />} />
+            <Route path="/offer-targets" element={<OfferTargets />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
 );

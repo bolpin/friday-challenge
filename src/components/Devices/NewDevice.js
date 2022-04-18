@@ -9,13 +9,16 @@ import { fetchDevices } from '../../store/devices-actions';
 
 import { useDispatch, useSelector } from 'react-redux';
 
+
 function NewDevice(props) {
 
-  const dispatch = useDispatch();
   const players = useSelector((state) => state.players.players);
+  const devices = useSelector((state) => state.devices.devices);
   const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
   const locales = useSelector((state) => state.locales.locales);
-  const devices = useSelector((state) => state.devices.devices);
+
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (players.changed) {

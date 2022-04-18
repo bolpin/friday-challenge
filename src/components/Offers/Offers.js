@@ -15,16 +15,9 @@ const Offers = (props) => {
 
   const offers = useSelector((state) => state.offers.offers);
 
-
   useEffect(() => {
     // load up the db data into state slices:
     dispatch(fetchOffers());
-    // dispatch(fetchPlayers());
-    // dispatch(fetchDevices());
-    // dispatch(fetchLocales());
-    // dispatch(fetchOperatingSystems());
-    // dispatch(fetchOfferTargets());
-    // dispatch(fetchGenders());
   }, [dispatch]);
 
   function addOfferHandler(offer) {

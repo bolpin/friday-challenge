@@ -8,7 +8,9 @@ import { fetchPlayers, deletePlayer, createPlayer, updatePlayer } from '../../st
 import { fetchGenders } from '../../store/genders-actions';
 import { useDispatch, useSelector } from 'react-redux';
 
+
 const Players = (props) => {
+
   const dispatch = useDispatch();
   const players = useSelector((state) => state.players.players);
 

@@ -16,8 +16,8 @@ import { fetchOperatingSystems } from '../../store/operating-systems-actions';
 const OfferTargets = (props) => {
 
   const dispatch = useDispatch();
-  const offerTargets = useSelector((state) => state.offerTargets.offerTargets);
   const genders = useSelector((state) => state.genders.genders);
+  const offerTargets = useSelector((state) => state.offerTargets.offerTargets);
 
   useEffect(() => {
     // load up the db data into state slices:

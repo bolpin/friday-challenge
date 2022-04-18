@@ -7,6 +7,7 @@ import useInput from "../../hooks/use-input";
 
 import { useSelector } from 'react-redux';
 
+
 const OfferTarget = (props) => {
 
   const [editing, setEditing] = useState(false);

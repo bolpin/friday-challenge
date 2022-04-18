@@ -2,12 +2,13 @@ import React from 'react';
 import useInput from '../../hooks/use-input';
 import styles from '../Form.module.css';
 
+
 function NewPlayer(props) {
 
   const nameTooShortMsg = "Name is too short."
   const requiredFieldMsg = "Required."
   const minAgeMsg = "Players must be 14 years old."
-  
+
   const validateOldEnough = (dob) => {
     // leap-years not included, so could add three days for the approx.
     // number of leap years in 14 years

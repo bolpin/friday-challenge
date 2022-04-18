@@ -4,6 +4,8 @@ import useInput from "../../hooks/use-input";
 import { useSelector } from 'react-redux';
 import { isValidSemVer } from '../../validation';
 
+
+
 const NewOfferTarget = (props) => {
 
   const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);

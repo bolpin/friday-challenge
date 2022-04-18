@@ -7,11 +7,14 @@ import { isValidSemVer } from "../../validation"
 
 import { useSelector } from 'react-redux';
 
+
 const Device = (props) => {
-  const [editing, setEditing] = useState(false);
+
   const players = useSelector((state) => state.players.players);
   const locales = useSelector((state) => state.locales.locales);
   const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
+
+  const [editing, setEditing] = useState(false);
 
   const requiredFieldMsg = "Required.";
 
