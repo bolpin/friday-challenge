@@ -9,16 +9,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchOffers } from '../../store/offers-actions';
 
 
+
 const Offers = (props) => {
 
   const dispatch = useDispatch();
 
   const offers = useSelector((state) => state.offers.offers);
 
-  useEffect(() => {
-    // load up the db data into state slices:
-    dispatch(fetchOffers());
-  }, [dispatch]);
+  // let initialRender = true;
+
+  // useEffect(() => {
+  //   if (initialRender) {
+  //     initialRender = false;
+  //     dispatch(fetchOffers());
+  //   }
+  // }, [dispatch]);
 
   function addOfferHandler(offer) {
     dispatch(createOffer(offer));

@@ -52,7 +52,7 @@ export const deletePlayer = (playerId) => {
       dispatch(
         uiActions.showNotification({
           status: "error",
-          title: "Error",
+          title: "Error deleting",
           message: error.message
         })
       );

@@ -17,32 +17,19 @@ function NewDevice(props) {
   const operatingSystems = useSelector((state) => state.operatingSystems.operatingSystems);
   const locales = useSelector((state) => state.locales.locales);
 
-
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (players.changed) {
-      dispatch(fetchPlayers());
-    }
-  }, [players]);
+  // let initialRender = true;
 
-  useEffect(() => {
-    if (devices.changed) {
-      dispatch(fetchDevices());
-    }
-  }, [dispatch, devices]);
-
-  useEffect(() => {
-    if (locales.changed) {
-      dispatch(fetchLocales());
-    }
-  }, [locales]);
-
-  useEffect(() => {
-    if (operatingSystems.changed) {
-      dispatch(fetchOperatingSystems());
-    }
-  }, [operatingSystems]);
+  // useEffect(() => {
+  //   if (initialRender) {
+  //     initialRender = false;
+  //     dispatch(fetchPlayers());
+  //     dispatch(fetchDevices());
+  //     dispatch(fetchLocales());
+  //     dispatch(fetchOperatingSystems());
+  //   }
+  // }, []);
 
   const deviceOwningPlayerIds = devices.map(d => d.player_id)
   const devicelessPlayers = players.filter(p => !(deviceOwningPlayerIds.includes(p.id)))

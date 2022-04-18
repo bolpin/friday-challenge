@@ -212,7 +212,7 @@ const Device = (props) => {
 
   const playerName = (playerId) => {
     const p = players.find(player => player.id === playerId);
-    return p ? `${p.first_name} ${p.last_name}` : "UNKNOWN"
+    return p ? `Owner: ${p.first_name} ${p.last_name}` : "UNKNOWN"
   }
 
   const osName = (osId) => {

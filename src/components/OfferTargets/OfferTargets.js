@@ -19,14 +19,18 @@ const OfferTargets = (props) => {
   const genders = useSelector((state) => state.genders.genders);
   const offerTargets = useSelector((state) => state.offerTargets.offerTargets);
 
-  useEffect(() => {
-    // load up the db data into state slices:
-    dispatch(fetchOffers());
-    dispatch(fetchOperatingSystems());
-    dispatch(fetchGenders());
-    dispatch(fetchOfferTargets());
-    dispatch(fetchLocales());
-  }, [dispatch]);
+  // let initialRender = true;
+
+  // useEffect(() => {
+  //   if (initialRender) {
+  //     // load up the db data into state slices:
+  //     dispatch(fetchOffers());
+  //     dispatch(fetchOperatingSystems());
+  //     dispatch(fetchGenders());
+  //     dispatch(fetchOfferTargets());
+  //     dispatch(fetchLocales());
+  //   }
+  // }, [dispatch]);
 
   function createOfferTargetHandler(offerTarget) {
     dispatch(createOfferTarget(offerTarget));

@@ -14,10 +14,15 @@ const Players = (props) => {
   const dispatch = useDispatch();
   const players = useSelector((state) => state.players.players);
 
-  useEffect(() => {
-    dispatch(fetchPlayers());
-    dispatch(fetchGenders());
-  }, [dispatch]);
+  // let initialRender = true;
+
+  // useEffect(() => {
+  //   if (initialRender) {
+  //     initialRender = false;
+  //     dispatch(fetchPlayers());
+  //     dispatch(fetchGenders());
+  //   }
+  // }, [dispatch]);
 
 
   function createPlayerHandler(player) {

@@ -7,18 +7,20 @@ import useInput from '../../hooks/use-input';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchMatchingPlayers } from '../../store/offer-targets-actions';
-import { fetchOfferTargets } from '../../store/offer-targets-actions';
+// import { fetchOfferTargets } from '../../store/offer-targets-actions';
 
 
 const MatchingPlayersReport = () => {
 
   const offerTargets = useSelector((state) => state.offerTargets.offerTargets);
+
   const matchingPlayers = useSelector((state) => state.offerTargets.matchingPlayers);
   const dispatch = useDispatch();
   
-  useEffect(() => {
-    dispatch(fetchOfferTargets());
-  }, [dispatch]);
+  // let initialRender = true;
+  // useEffect(() => {
+  //   dispatch(fetchOfferTargets());
+  // }, [dispatch]);
 
   const requiredErrMsg = "Required."
 
